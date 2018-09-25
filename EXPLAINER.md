@@ -1,3 +1,158 @@
-WebHID Explainer
+# WebHID Explainer
 
-Author: mattreynolds@google.com
+<!-- TOC -->
+<!-- /TOC -->
+
+## Basic terminology
+
+A **HID (Human Interface Device)** is a type of device that takes input from or provides output to humans. It also refers to the HID protocol, a standard for bi-directional communication between a host and a device that is designed to simplify the installation procedure. The HID protocol was originally developed for USB devices but has since been implemented over many other protocols, including Bluetooth.
+
+A **HID report** is a binary data packet communicated between the host and the device. Input reports are sent from the device to the host, output reports are sent from the host to the device, and feature reports may be sent in either direction. The format of HID reports is device-specific.
+
+A **HID report descriptor** can be requested by the host during device enumeration. The report descriptor describes the binary format of reports supported by a device. The structure of the descriptor is hierarchical and can group reports together as distinct collections within the top-level collection. The format of the descriptor is defined by the HID specification.
+
+A **HID usage** is a numeric value referring to a standardized input or output. The list of HID usages is available as part of the USB specification. Usage values allow a device to describe the intended use of the device itself as well as the purpose of each field in its reports. Usages are organized into usage pages, which provide an indication of the high-level category of the device or report field.
+
+## Use cases
+
+The web platform already supports input from HID. Keyboards, pointing devices (mice, touchscreens, etc.), and gamepads are all typically implemented using the HID protocol. However, this support relies on the operating system's HID drivers that transform the HID input into native input APIs. Devices that are not well supported by the HID driver are often inaccessible to web pages. Similarly, the outputs on most devices are also inaccessible.
+
+The inability to access uncommon or unusual HID devices is particularly painful when it comes to gamepad support. Gamepads designed for PC often use HID for gamepad inputs (buttons, joysticks, triggers) and outputs (LEDs, rumble). However, gamepads inputs and outputs are not well standardized and web browsers often require custom logic for specific devices. This is unsustainable and results in poor support for the long tail of older and uncommon devices. It also causes the browser to depend on quirks present in the behavior of specific devices. A HID standard for the web platform would allow the device-specific logic to be moved into javascript for devices that lack support in the browser.
+
+The HID protocol is popular in large part because of the ease of installation, which encourages device manufacturers to use HID for purposes other than communication with humans. For instance, HID reports may be used to pair devices over a vendor-proprietary wireless link or update device firmware. These features usually require a small native app on the host's side to initiate the process, but with API support this app could be implemented as a web page.
+
+## Example
+
+The example below requests a HID device by specifying its vendor and product IDs, sends an initialization packet, and listens for an input report containing a button input.
+
+    let deviceFilter = { vendorId: 0x1234, productId: 0xabcd };
+    let requestParams  = { filters: [deviceFilter] };
+    let initReport = new Uint8Array(1);
+    initReport[0] = 42;
+
+    function handleInputReport(e) {
+        // Fetch the value of the first button in the report.
+        let fieldParams = { reportId: e.reportId, fieldIndex: 0 };
+        let buttonValue = e.device.collection.getField(e.data, fieldParams);
+        console.log('Button value is ' + buttonValue);
+    }
+
+    navigator.hid.requestDevice(requestParams).then((devices) => {
+        let device = devices[0];
+        device.open().then(() => {
+            console.log('Opened HID device');
+            device.addEventListener('inputreport', handleInputReport);
+            device.sendReport(0x01, initReport).then(() => {
+                console.log('Sent initialization packet');
+            });
+        });
+    });
+
+## Proposed IDL
+
+The globally accessible component of the WebHID API is attached to the navigator interface as `navigator.hid`.
+
+    partial interface Navigator {
+        readonly attribute HID hid;
+    };
+
+The `navigator.hid` member allows the page to register event listeners for connection events. The page can request an array of all devices currently accessible by the page with `getDevices`. For security reasons, no HID devices are available by default. The page may call `requestDevice` to display a chooser dialog where the user can select from connected HID devices. Once the selection is completed, the `Promise` returned by `requestDevice` resolves to an array of `HIDDevice` objects.
+
+    interface HID : EventTarget {
+        attribute EventHandler onconnect;
+        attribute EventHandler ondisconnect;
+        Promise<sequence<HIDDevice>> getDevices();
+        Promise<sequence<HIDDevice>> requestDevice(HIDRequestDeviceParams options);
+    };
+
+    interface HIDInputEvent : Event {
+        readonly attribute HIDDevice device;
+        readonly attribute octet? reportId;
+        readonly attribute DataView data;
+    };
+
+    dictionary HIDRequestDeviceParams {
+        sequence<HIDRequestDeviceFilter> filters;
+    };
+
+    dictionary HIDRequestDeviceFilter {
+        unsigned short vendorId;
+        unsigned short productId;
+        unsigned short usagePage;
+        unsigned short usage;
+    };
+
+The returned `HIDDevice` objects contain vendor and product ID values for device identification. The devices are returned in the closed state and must be opened before data can be sent or received. The collection attribute is initialized with a hierarchical description of the device's report formats.
+
+Once opened, the `HIDDevice` object can be used to send output reports with `sendReport` or listen for input reports by registering an `oninputreport` event listener. Feature reports can be sent and received with `setFeatureReport` and `receiveFeatureReport`. All methods return a `Promise` that resolves once the operation is complete.
+
+    interface HIDDevice {
+        attribute EventHandler oninputreport;
+        readonly attribute boolean opened;
+        readonly attribute unsigned short vendorId;
+        readonly attribute unsigned short productId;
+        readonly attribute HIDCollectionInfo collection;
+
+        Promise<void> open();
+        Promise<void> close();
+        Promise<void> sendReport(octet? reportId, BufferSource data);
+        Promise<void> setOutputReport(octet? reportId, BufferSource data);
+        Promise<void> setFeatureReport(octet? reportId, BufferSource data);
+        Promise<DataView> getFeatureReport(octet? reportId);
+    };
+
+The information contained in the report descriptor is not needed to communicate with the device, but may be useful for applications that rely on the report's characteristics to recognize supported devices. (For instance, an app may not care if a device has other inputs as long as it has at least one button.) It also serves as a guide for parsing data from input reports. Convenience methods `getField` and `setField` allow simpler access to field values within the report buffer.
+
+The IDL below is based off of the information returned by the Windows HID API and is likely to change. On Windows it is not possible to retrieve the full report descriptor from a HID device; instead, applications can query device capabilities from a "preparsed data" buffer to receive equivalent information for a particular collection. To ensure the WebHID API can expose collection information on Windows, `HIDCollectionInfo` will aim to expose a subset of the information available through the Windows HID API.
+
+    interface HIDCollectionInfo {
+        readonly attribute unsigned short usagePage;
+        readonly attribute unsigned short usage;
+        readonly attribute FrozenArray<HIDCollectionInfo> children;
+        readonly attribute FrozenArray<HIDReportInfo> inputReports;
+        readonly attribute FrozenArray<HIDReportInfo> outputReports;
+        readonly attribute FrozenArray<HIDReportInfo> featureReports;
+
+        Number or sequence<Number> or DataView getField(BufferSource reportData,
+                                                        HIDFieldParams params);
+        void setField(BufferSource reportData,
+                      HIDFieldParams params,
+                      Number or sequence<Number> or DataView value);
+    };
+
+    dictionary HIDFieldParams {
+        octet reportId;
+        int fieldIndex;
+        boolean isFeatureReport;
+    };
+
+    interface HIDReportInfo {
+        readonly attribute octet reportId;
+        readonly attribute FrozenArray<HIDFieldInfo> fields;
+    };
+
+    interface HIDFieldInfo {
+        readonly attribute unsigned short usagePage;
+        readonly attribute octet reportId;
+        readonly attribute unsigned short bitField;
+        readonly attribute boolean isRange;
+        readonly attribute boolean isStringRange;
+        readonly attribute boolean isDesignatorRange;
+        readonly attribute boolean isAbsolute;
+        readonly attribute boolean isValue;
+        readonly attribute unsigned short usageMin;
+        readonly attribute unsigned short usageMax;
+        readonly attribute unsigned short stringMin;
+        readonly attribute unsigned short stringMax;
+        readonly attribute unsigned short designatorMin;
+        readonly attribute unsigned short designatorMax;
+        readonly attribute boolean hasNull;
+        readonly attribute unsigned short bitSize;
+        readonly attribute unsigned short reportCount;
+        readonly attribute unsigned long unitsExp;
+        readonly attribute unsigned long units;
+        readonly attribute long logicalMin;
+        readonly attribute long logicalMax;
+        readonly attribute long physicalMin;
+        readonly attribute long physicalMax;
+    };
