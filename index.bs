@@ -1,0 +1,354 @@
+<pre class="metadata">
+Title: WebHID API
+Status: ED
+ED: https://github.com/nondebug/webhid
+Shortname: webhid
+Level: 1
+Editor: Matt Reynolds 105511, Google LLC https://www.google.com, mattreynolds@google.com
+Abstract: This document describes an API for providing access to devices that support the Human Interface Device (HID) protocol.
+Group: wicg
+Repository: https://github.com/nondebug/webhid
+</pre>
+
+<style>
+table {
+  border-collapse: collapse;
+  border-left-style: hidden;
+  border-right-style: hidden;
+  text-align: left;
+}
+table caption {
+  font-weight: bold;
+  padding: 3px;
+  text-align: left;
+}
+table td, table th {
+  border: 1px solid black;
+  padding: 3px;
+}
+</style>
+
+
+
+
+# Introduction # {#introduction}
+
+<em>This section is non-normative</em>.
+
+A HID (Human Interface Device) is a type of device that takes input from or provides output to humans. It also refers to the HID protocol, a standard for bi-directional communication between a host and a device that is designed to simplify the installation procedure. The HID protocol was originally developed for USB devices but has since been implemented over many other protocols, including Bluetooth.
+
+The web platform already supports input from many HID devices. Keyboards, pointing devices, and gamepads are all typically implemented using the HID protocol. However, this support relies on the operating system's HID drivers that transform the HID input into high-level input APIs. Devices that are not well supported by the host's HID driver are often inaccessible to web pages. Similarly, the outputs on most devices that are not supported by the host's HID driver are inaccessible.
+
+
+# Motivating Applications # {#motivating-applications}
+
+<em>This section is non-normative</em>.
+
+## Niche devices ## {#app-niche-devices}
+
+The most common classes of HID input devices are already well-supported on the web platform through existing high-level input APIs. For instance, mouse input is accessible through the PointerEvent API and keyboard input is accessible through the Keyboard API. Input from these devices is handled using the host's native HID driver and typically does not require device-specific drivers or configuration to work correctly. WebHID is not intended for devices like these that are already well-supported through high-level input APIs.
+
+For some classes of HID devices, the web platform supports some features of the device but limits access to other features. For instance, the Gamepad API supports the input capabilities of most game controllers but does not support less common capabilities like LED indicators or audio. These features are often not well-supported by host APIs and adding support within the user agent can lead to significant complexity. WebHID would give applications an alternative when the functionality provided by the high-level API is incomplete.
+
+Many HID devices are not supported through any web platform API. The HID specification describes a wide array of devices that could be supported through HID, including virtual reality controls, flight simulators, medical equipment, and more. WebHID would allow these devices to be used without requiring additional drivers or modification to the user agent.
+
+## Prototyping, hobbyists, and educational devices ## {#app-prototype-educational}
+
+HID is attractive for prototyping and hobbyist applications because it allows devices to use the host's generic HID driver instead of requiring a driver for each host where the device will be used. The simplified installation procedure also makes it easier for educators to deploy a device to a classroom of students without modifying the system configuration on each host. Providing access to HID devices through the web platform would further reduce installation requirements, particularly for devices that are currently only supported through host-specific applications.
+
+
+# Security and Privacy Considerations # {#security-and-privacy}
+
+<em>This section is non-normative</em>.
+
+## Abusing Access to a Device ## {#abusing-a-device}
+
+HID peripherals may expose powerful functionality that should not be made accessible to the page without explicit consent from the user. For instance, a HID device may have sensors that allow it to collect information about its surroundings. A device may store private information that should not be revealed or overwritten. Many devices expose functionality that allow the device firmware to be upgraded. Operating systems typically do not restrict access to HID devices from applications, and in many cases this access can be abused to damage the device or the data stored on it.
+
+In some cases, a device may expose functionality that should not be accessible at all from a web page. A security key, for instance, stores private encryption data and can be used to . Providing access to 
+
+* Abusing access to a device
+  * HID peripherals may expose powerful functionality that
+    * writes private data to the device (e.g., encryption keys)
+    * senses its surroundings (e.g., accelerometer)
+    * provides mechanical feedback (e.g., haptic vibration)
+    * allows the device firmware to be reprogrammed
+  * some types of devices should not be accessible at all
+    * security keys with stored secrets (e.g. FIDO devices)
+  * some devices should have a subset of their functionality masked
+    * mouse and keyboard events must not be loggable
+  * mitigations
+    * a device may not be used unless the user has granted explicit access
+    * access must be requested (HID.requestDevice) via a chooser UI
+    * requesting a device requires a secure context (powerful-features)
+    * an indicator is displayed when a device is in use
+    * some device classes are fully or partially blocked
+      * known security key devices are blocked by vendor/product ID
+      * reports defined in a collection with a protected usage page may not be sent
+        * 0xf1d0 usage page (FIDO/U2F security keys)
+        * GenericDesktop Keyboard/Mouse usage pages (keyboards and pointing devices)
+      * hide information about collections with a protected usage page
+
+## Attacking a Device ## {#attacking-a-device}
+
+* Attacking a device
+  * some devices can have their firmware upgraded over HID
+    * overwrite with corrupt data (brick)
+    * add or remove capabilities of the device
+      * could add trusted input capabilities to a device that did not support it
+  * many ways to damage or disable a device
+    * destroy the vibration actuator on a gamepad
+    * overwrite secrets on a security key
+    * drain the battery of a wireless device
+
+## Attacking the Host ## {#attacking-the-host}
+
+* Attacking the host
+  * some HID devices generate trusted user input (e.g. mice and keyboards)
+    * keyboards/mice may have programmable macros
+      * these could generate trusted user input without any user activation
+      * most are not programmable over HID
+        * Massdrop: generate a signed FW image, download, flash to device (HID?)
+        * Corsair: macros are handled on the host and not sent to the device
+        * Ducky: macros are programmed using key combos on the device
+  * some HID devices are used for 2-factor authentication, e.g. FIDO/U2F
+    * allowing access could trigger a 2FA challenge at an unexpected time
+  * overwriting the firmware could cause the device to become malicious
+    * could record and upload user input
+    * could add trusted input functionality to a device that did not have it
+    * to mitigate, devices should require signatures on firmware updates
+      * also should disallow downgrading to an older, less secure version
+
+
+# Device Enumeration # {#enumeration}
+
+<xmp class="idl">
+
+dictionary HIDDeviceFilter {
+    unsigned long vendorId;
+    unsigned short productId;
+    unsigned short usagePage;
+    unsigned short usage;
+};
+
+dictionary HIDDeviceRequestOptions {
+    required sequence<HIDDeviceFilter> filters;
+};
+
+[SecureContext]
+interface HID : EventTarget {
+    attribute EventHandler onconnect;
+    attribute EventHandler ondisconnect;
+    Promise<sequence<HIDDevice>> getDevices();
+    Promise<sequence<HIDDevice>> requestDevice(
+        HIDDeviceRequestOptions options);
+};
+
+[SecureContext] partial interface Navigator {
+    [SameObject] readonly attribute HID hid;
+};
+
+</xmp>
+
+<div class="example">
+Retrieve devices and log the device names to the console.
+
+<pre highlight="js">
+  document.addEventListener('DOMContentLoaded', async () => {
+    let devices = await navigator.hid.getDevices();
+    devices.forEach(device => {
+      console.log('HID: ${device.productName}');
+    });
+  });
+</pre>
+
+Register event listeners for connection and disconnection of HID devices.
+
+<pre highlight="js">
+  navigator.hid.addEventListener('connect', async () => {
+    console.log('HID connected: ${device.productName}');
+  });
+
+  navigator.hid.addEventListener('disconnect', async () => {
+    console.log('HID disconnected: ${device.productName}');
+  });
+</pre>
+
+Devices are not accessible through {{HID/getDevices()}} and will not generate connection events until permission has been granted to access the device. The page may request permission using {{HID/requestDevice()}}. In this example, the page requests access to a device with vendor ID <code>0xABCD</code>, product ID <code>0x1234</code>. The device must also have a collection with usage page Consumer (<code>0x0C</code>) and usage ID Consumer Control (<code>0x01</code>).
+
+<pre highlight="js">
+  let requestButton = document.getElementById('request-hid-device');
+  requestButton.addEventListener('click', async () => {
+    let device;
+    try {
+      device = await navigator.hid.requestDevice({ filters: [{
+          vendorId: 0xABCD,
+          productId: 0x1234,
+          usagePage: 0x0C,
+          usage: 0x01
+      }]});
+    } catch (error) {
+      console.log('No device was selected.');
+    }
+
+    if (device !== undefined) {
+      console.log('HID: ${device.productName}');
+    }
+  });
+</pre>
+</div>
+
+A HID device |device| <dfn data-lt-"match a device filter">matches a device filter</dfn> |filter| if the following steps return <code>match</code>:
+
+1. If <code>|filter|.{{HIDDeviceFilter/vendorId}}</code> is present and <code>|device|.{{HIDDevice/vendorId}}</code> does not equal <code>|filter|.{{HIDDeviceFilter/vendorId}}</code>, return <code>mismatch</code>.
+1. If <code>|filter|.{{HIDDeviceFilter/productId}}</code> is present and <code>|device|.{{HIDDevice/productId}}</code> does not equal <code>|filter|.{{HIDDeviceFilter/productId}}</code>, return <code>mismatch</code>.
+1. If <code>|filter|.{{HIDDeviceFilter/usagePage}}</code> is present, iterate over the {{HIDCollectionInfo}} collections in |device|.{{HIDDevice/collections}}. If no collection <a>matches the device filter</a>, return <code>mismatch</code>.
+1. Return <code>match</code>.
+
+A {{HIDCollectionInfo}} |collection| <dfn data-lt="matches the device filter">matches a device filter</dfn> |filter| if the following steps return <code>match</code>:
+
+1. If <code>|filter|.{{HIDDeviceFilter/usagePage}}</code> is present and <code>|device|.{{HIDCollectionInfo/usagePage}}</code> does not equal <code>|filter|.{{HIDDeviceFilter/usagePage}}</code>, return <code>mismatch</code>.
+1. If <code>|filter|.{{HIDDeviceFilter/usage}}</code> is present and <code>|device|.{{HIDCollectionInfo/usage}}</code> does not equal <code>|filter|.{{HIDDeviceFilter/usage}}</code>, return <code>mismatch</code>.
+1. Return <code>match</code>.
+
+A {{HIDDeviceFilter}} |filter| <dfn data-lt="is not a valid filter">is valid</dfn> if the following steps return <code>valid</code>:
+
+1. If <code>|filter|.{{HIDDeviceFilter/productId}}</code> is present and <code>|filter|.{{HIDDeviceFilter/vendorId}}</code> is not present, return <code>invalid</code>.
+1. If <code>|filter|.{{HIDDeviceFilter/usage}}</code> is present and <code>|filter|.{{HIDDeviceFilter/usagePage}}</code> is not present, return <code>invalid</code>.
+1. Return <code>valid</code>.
+
+The UA MUST be able to <dfn>enumerate all devices attached to the system</dfn>. It is not required to perform this work each time an algorithm requests an enumeration. The UA MAY cache the result of the first enumeration it performs and then begin monitoring for device connection and disconnection events, adding connected devices to its cached enumeration and removing disconnected devices. This mode of operation is preferred as it reduces the number of operating system calls.
+
+## Events ## {#events}
+
+<xmp class="idl">
+
+dictionary HIDConnectionEventInit : EventInit {
+    required HIDDevice device;
+};
+
+[
+    Constructor(DOMString type, HIDConnectionEventInit eventInitDict),
+    SecureContext
+] interface HIDConnectionEvent : Event {
+    [SameObject] readonly attribute HIDDevice device;
+};
+
+dictionary HIDInputReportEventInit : EventInit {
+    required HIDDevice device;
+    required octet reportId;
+    required DataView data;
+};
+
+[
+    Constructor(DOMString type, HIDInputReportEventInit eventInitDict),
+    SecureContext
+] interface HIDInputReportEvent : Event {
+    [SameObject] readonly attribute HIDDevice device;
+    readonly attribute octet reportId;
+    readonly attribute DataView data;
+};
+
+</xmp>
+
+
+
+
+
+
+HID Collection and Report Information
+
+<xmp class="idl">
+
+[SecureContext] interface HIDReportItem {
+    readonly attribute boolean isAbsolute;
+    readonly attribute boolean isArray;
+    readonly attribute boolean isRange;
+    readonly attribute boolean hasNull;
+    readonly attribute FrozenArray<unsigned long> usages;
+    readonly attribute unsigned long usageMinimum;
+    readonly attribute unsigned long usageMaximum;
+    readonly attribute unsigned long designatorMinimum;
+    readonly attribute unsigned long designatorMaximum;
+    readonly attribute unsigned long stringMinimum;
+    readonly attribute unsigned long stringMaximum;
+    readonly attribute unsigned short reportSize;
+    readonly attribute unsigned short reportCount;
+    readonly attribute unsigned long unitExponent;
+    readonly attribute unsigned long unit;
+    readonly attribute long logicalMinimum;
+    readonly attribute long logicalMaximum;
+    readonly attribute long physicalMinimum;
+    readonly attribute long physicalMaximum;
+};
+
+[SecureContext] interface HIDReportInfo {
+    readonly attribute octet reportId;
+    readonly attribute FrozenArray<HIDReportItem> items;
+};
+
+dictionary HIDFieldOptions {
+    octet reportId;
+    int fieldIndex;
+    boolean isFeatureReport;
+};
+
+[SecureContext] interface HIDCollectionInfo {
+    readonly attribute unsigned short usagePage;
+    readonly attribute unsigned short usage;
+    readonly attribute FrozenArray<HIDCollectionInfo> children;
+    readonly attribute FrozenArray<HIDReportInfo> inputReports;
+    readonly attribute FrozenArray<HIDReportInfo> outputReports;
+    readonly attribute FrozenArray<HIDReportInfo> featureReports;
+    readonly attribute FrozenArray<octet> reportIds;
+
+    Number or sequence<Number> or DataView getField(BufferSource reportData,
+                                                    HIDFieldOptions options);
+    void setField(BufferSource reportData, HIDFieldOptions options,
+                  Number or sequence<Number> or DataView value);
+};
+
+</xmp>
+
+
+
+
+
+# Device Usage # {#device-usage}
+
+<xmp class="idl">
+
+[SecureContext] interface HIDDevice : EventTarget {
+    attribute EventHandler oninputreport;
+    readonly attribute boolean opened;
+    readonly attribute unsigned short vendorId;
+    readonly attribute unsigned short productId;
+    readonly attribute DOMString productName;
+    readonly attribute FrozenArray<HIDCollectionInfo> collections;
+    Promise<void> open();
+    Promise<void> close();
+    Promise<void> sendReport(octet reportId, BufferSource data);
+    Promise<void> sendFeatureReport(octet reportId, BufferSource data);
+    Promise<DataView> receiveFeatureReport(octet reportId);
+};
+
+[SecureContext] interface HIDInputReportEvent : Event {
+    [SameObject] readonly attribute HIDDevice device;
+    readonly attribute octet reportId;
+    readonly attribute DataView data;
+};
+
+</xmp>
+
+
+
+# Integrations # {#integrations}
+
+## Feature Policy ## {#feature-policy}
+
+This specification defines a <a>feature</a> that controls whether the {{Navigator/hid}} attribute is exposed on the {{Navigator}} object.
+
+The <a>feature name</a> for this feature is <code>"hid"</code>.
+
+The <a>default allowlist</a> for this feature is <code>["self"]</code>.
+
