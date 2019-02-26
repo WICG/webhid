@@ -288,8 +288,8 @@ HID Collection and Report Information
 };
 
 dictionary HIDFieldOptions {
-    octet reportId;
-    int fieldIndex;
+    required octet reportId;
+    required int fieldIndex;
     boolean isFeatureReport;
 };
 
@@ -302,10 +302,10 @@ dictionary HIDFieldOptions {
     readonly attribute FrozenArray<HIDReportInfo> featureReports;
     readonly attribute FrozenArray<octet> reportIds;
 
-    Number or sequence<Number> or DataView getField(BufferSource reportData,
+    sequence<Number> getField(BufferSource reportData,
                                                     HIDFieldOptions options);
     void setField(BufferSource reportData, HIDFieldOptions options,
-                  Number or sequence<Number> or DataView value);
+                  Number value);
 };
 
 </xmp>
@@ -332,12 +332,6 @@ dictionary HIDFieldOptions {
     Promise<DataView> receiveFeatureReport(octet reportId);
 };
 
-[SecureContext] interface HIDInputReportEvent : Event {
-    [SameObject] readonly attribute HIDDevice device;
-    readonly attribute octet reportId;
-    readonly attribute DataView data;
-};
-
 </xmp>
 
 
@@ -351,4 +345,3 @@ This specification defines a <a>feature</a> that controls whether the {{Navigato
 The <a>feature name</a> for this feature is <code>"hid"</code>.
 
 The <a>default allowlist</a> for this feature is <code>["self"]</code>.
-
