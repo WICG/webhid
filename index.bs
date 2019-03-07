@@ -63,62 +63,25 @@ HID is attractive for prototyping and hobbyist applications because it allows de
 
 ## Abusing Access to a Device ## {#abusing-a-device}
 
-HID peripherals may expose powerful functionality that should not be made accessible to the page without explicit consent from the user. For instance, a HID device may have sensors that allow it to collect information about its surroundings. A device may store private information that should not be revealed or overwritten. Many devices expose functionality that allow the device firmware to be upgraded. Operating systems typically do not restrict access to HID devices from applications, and in many cases this access can be abused to damage the device or the data stored on it.
+HID peripherals may expose powerful functionality that should not be made accessible to the page without explicit consent from the user. For instance, a HID peripheral may have sensors that allow it to collect information about its surroundings. A device may store private information that should not be revealed or overwritten. Many devices expose functionality that allow the device firmware to be upgraded. Operating systems typically do not restrict access to HID devices from applications, and this access can occasionally be abused to damage the device or corrupt the data stored on it.
 
-In some cases, a device may expose functionality that should not be accessible at all from a web page. A security key, for instance, stores private encryption data and can be used to . Providing access to 
+In some cases, a device may expose functionality that should not be accessible at all from a web page. Specific devices may be blocked by recognizing the device by its vendor and product ID and hiding such devices during enumeration. The HID report descriptor allows a device to describe its own capabilities, and this information can be used to block classes of devices even when the vendor and product ID cannot be known in advance. This can be accomplished by inspecting the usage values assigned to collections within the report descriptor; for instance, access to keyboard-like devices can be denied by denying access to devices that include a top-level collection with the Keyboard usage ID.
 
-* Abusing access to a device
-  * HID peripherals may expose powerful functionality that
-    * writes private data to the device (e.g., encryption keys)
-    * senses its surroundings (e.g., accelerometer)
-    * provides mechanical feedback (e.g., haptic vibration)
-    * allows the device firmware to be reprogrammed
-  * some types of devices should not be accessible at all
-    * security keys with stored secrets (e.g. FIDO devices)
-  * some devices should have a subset of their functionality masked
-    * mouse and keyboard events must not be loggable
-  * mitigations
-    * a device may not be used unless the user has granted explicit access
-    * access must be requested (HID.requestDevice) via a chooser UI
-    * requesting a device requires a secure context (powerful-features)
-    * an indicator is displayed when a device is in use
-    * some device classes are fully or partially blocked
-      * known security key devices are blocked by vendor/product ID
-      * reports defined in a collection with a protected usage page may not be sent
-        * 0xf1d0 usage page (FIDO/U2F security keys)
-        * GenericDesktop Keyboard/Mouse usage pages (keyboards and pointing devices)
-      * hide information about collections with a protected usage page
+To mitigate abuse, a device will not be made available to the page until the user has granted explicit access. Access must first be requested by the page and will be granted once the user has selected the device from a chooser displaying all available devices. Once a page has been granted access, an indicator will be displayed to indicate the device is in use.
 
 ## Attacking a Device ## {#attacking-a-device}
 
-* Attacking a device
-  * some devices can have their firmware upgraded over HID
-    * overwrite with corrupt data (brick)
-    * add or remove capabilities of the device
-      * could add trusted input capabilities to a device that did not support it
-  * many ways to damage or disable a device
-    * destroy the vibration actuator on a gamepad
-    * overwrite secrets on a security key
-    * drain the battery of a wireless device
+The HID protocol is extremely versatile, and a wide variety of devices have been designed that take advantage of this versatility. As a result, there are many possibilities for how access to a device could allow a malicious page to damage the device itself. It is relatively common for HID peripherals to allow firmware updates to be sent using custom HID reports. Device manufacturers must take care to design the firmware upgrade mechanism to verify that the firmware binary is authentic, and should also protect against downgrades that could reduce the security of a device. Untrusted upgrades could be used to add new capabilities to a device or cause it to masquerade as an entirely different type of device.
+
+Some devices may be damaged when inputs are provided outside of the expected range. For instance, the rumble feature on a gamepad could become damaged if a page sends an invalid rumble command.
+
+In general, these types of attacks are device-specific and cannot be mitigated at the API level.
 
 ## Attacking the Host ## {#attacking-the-host}
 
-* Attacking the host
-  * some HID devices generate trusted user input (e.g. mice and keyboards)
-    * keyboards/mice may have programmable macros
-      * these could generate trusted user input without any user activation
-      * most are not programmable over HID
-        * Massdrop: generate a signed FW image, download, flash to device (HID?)
-        * Corsair: macros are handled on the host and not sent to the device
-        * Ducky: macros are programmed using key combos on the device
-  * some HID devices are used for 2-factor authentication, e.g. FIDO/U2F
-    * allowing access could trigger a 2FA challenge at an unexpected time
-  * overwriting the firmware could cause the device to become malicious
-    * could record and upload user input
-    * could add trusted input functionality to a device that did not have it
-    * to mitigate, devices should require signatures on firmware updates
-      * also should disallow downgrading to an older, less secure version
+If a malicious page gains access to a device, in some cases this access can be used to attack the host. A major concern is whether the device can be used to generate trusted input events. These events serve as a proxy for user intent and can be used to access more powerful web platform features.
 
+Mice and keyboards are typically implemented as HID peripherals, and are also capable of generating trusted input. A HID keyboard or mouse may contain advanced features like programmable macros, which store a sequence of inputs and allow the sequence to be played back at a later time. Device manufacturers must take care to design such features in a way that would prevent a malicious app from reprogramming the device with an unexpected input sequence, and must also protect against triggering macro playback without the user's explicit consent.
 
 # Device Enumeration # {#enumeration}
 
@@ -198,7 +161,7 @@ Devices are not accessible through {{HID/getDevices()}} and will not generate co
 </pre>
 </div>
 
-A HID device |device| <dfn data-lt-"match a device filter">matches a device filter</dfn> |filter| if the following steps return <code>match</code>:
+A HID device |device| <dfn data-lt="match a device filter">matches a device filter</dfn> |filter| if the following steps return <code>match</code>:
 
 1. If <code>|filter|.{{HIDDeviceFilter/vendorId}}</code> is present and <code>|device|.{{HIDDevice/vendorId}}</code> does not equal <code>|filter|.{{HIDDeviceFilter/vendorId}}</code>, return <code>mismatch</code>.
 1. If <code>|filter|.{{HIDDeviceFilter/productId}}</code> is present and <code>|device|.{{HIDDevice/productId}}</code> does not equal <code>|filter|.{{HIDDeviceFilter/productId}}</code>, return <code>mismatch</code>.
@@ -253,10 +216,7 @@ dictionary HIDInputReportEventInit : EventInit {
 
 
 
-
-
-
-HID Collection and Report Information
+## HID Collection and Report Information ## {#report-descriptor}
 
 <xmp class="idl">
 
@@ -289,7 +249,7 @@ HID Collection and Report Information
 
 dictionary HIDFieldOptions {
     required octet reportId;
-    required int fieldIndex;
+    required unsigned long fieldIndex;
     boolean isFeatureReport;
 };
 
@@ -302,10 +262,9 @@ dictionary HIDFieldOptions {
     readonly attribute FrozenArray<HIDReportInfo> featureReports;
     readonly attribute FrozenArray<octet> reportIds;
 
-    sequence<Number> getField(BufferSource reportData,
-                                                    HIDFieldOptions options);
+    double getField(BufferSource reportData, HIDFieldOptions options);
     void setField(BufferSource reportData, HIDFieldOptions options,
-                  Number value);
+                  double value);
 };
 
 </xmp>
@@ -340,8 +299,8 @@ dictionary HIDFieldOptions {
 
 ## Feature Policy ## {#feature-policy}
 
-This specification defines a <a>feature</a> that controls whether the {{Navigator/hid}} attribute is exposed on the {{Navigator}} object.
+This specification defines a feature that controls whether the {{Navigator/hid}} attribute is exposed on the {{Navigator}} object.
 
-The <a>feature name</a> for this feature is <code>"hid"</code>.
+The feature name for this feature is <code>"hid"</code>.
 
 The <a>default allowlist</a> for this feature is <code>["self"]</code>.
