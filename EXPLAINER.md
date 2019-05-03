@@ -32,8 +32,7 @@ The example below requests a HID device by specifying its vendor and product IDs
 
     function handleInputReport(e) {
         // Fetch the value of the first button in the report.
-        let fieldParams = { reportId: e.reportId, fieldIndex: 0 };
-        let buttonValue = e.device.collection.getField(e.data, fieldParams);
+        let buttonValue = e.data;
         console.log('Button value is ' + buttonValue);
     }
 
@@ -62,21 +61,21 @@ The `navigator.hid` member allows the page to register event listeners for conne
         attribute EventHandler onconnect;
         attribute EventHandler ondisconnect;
         Promise<sequence<HIDDevice>> getDevices();
-        Promise<sequence<HIDDevice>> requestDevice(HIDRequestDeviceParams options);
+        Promise<sequence<HIDDevice>> requestDevice(HIDDeviceRequestOptions options);
     };
 
-    interface HIDInputEvent : Event {
+    interface HIDInputReportEvent : Event {
         readonly attribute HIDDevice device;
-        readonly attribute octet? reportId;
+        readonly attribute octet reportId;
         readonly attribute DataView data;
     };
 
-    dictionary HIDRequestDeviceParams {
-        sequence<HIDRequestDeviceFilter> filters;
+    dictionary HIDDeviceRequestOptions {
+        sequence<HIDDeviceFilter> filters;
     };
 
-    dictionary HIDRequestDeviceFilter {
-        unsigned short vendorId;
+    dictionary HIDDeviceFilter {
+        unsigned long vendorId;
         unsigned short productId;
         unsigned short usagePage;
         unsigned short usage;
@@ -91,14 +90,14 @@ Once opened, the `HIDDevice` object can be used to send output reports with `sen
         readonly attribute boolean opened;
         readonly attribute unsigned short vendorId;
         readonly attribute unsigned short productId;
-        readonly attribute HIDCollectionInfo collection;
-
+        readonly attribute DOMString productName;
+        readonly attribute FrozenArray<HIDCollectionInfo> collections;
         Promise<void> open();
         Promise<void> close();
-        Promise<void> sendReport(octet? reportId, BufferSource data);
-        Promise<void> setOutputReport(octet? reportId, BufferSource data);
-        Promise<void> setFeatureReport(octet? reportId, BufferSource data);
-        Promise<DataView> getFeatureReport(octet? reportId);
+        Promise<void> sendReport(octet reportId, BufferSource data);
+        Promise<void> setOutputReport(octet reportId, BufferSource data);
+        Promise<void> setFeatureReport(octet reportId, BufferSource data);
+        Promise<DataView> getFeatureReport(octet reportId);
     };
 
 The information contained in the report descriptor is not needed to communicate with the device, but may be useful for applications that rely on the report's characteristics to recognize supported devices. (For instance, an app may not care if a device has other inputs as long as it has at least one button.) It also serves as a guide for parsing data from input reports. Convenience methods `getField` and `setField` allow simpler access to field values within the report buffer.
@@ -112,47 +111,39 @@ The IDL below is based off of the information returned by the Windows HID API an
         readonly attribute FrozenArray<HIDReportInfo> inputReports;
         readonly attribute FrozenArray<HIDReportInfo> outputReports;
         readonly attribute FrozenArray<HIDReportInfo> featureReports;
-
-        Number or sequence<Number> or DataView getField(BufferSource reportData,
-                                                        HIDFieldParams params);
-        void setField(BufferSource reportData,
-                      HIDFieldParams params,
-                      Number or sequence<Number> or DataView value);
-    };
-
-    dictionary HIDFieldParams {
-        octet reportId;
-        int fieldIndex;
-        boolean isFeatureReport;
     };
 
     interface HIDReportInfo {
         readonly attribute octet reportId;
-        readonly attribute FrozenArray<HIDFieldInfo> fields;
+        readonly attribute FrozenArray<HIDReportItem> items;
     };
 
-    interface HIDFieldInfo {
-        readonly attribute unsigned short usagePage;
-        readonly attribute octet reportId;
-        readonly attribute unsigned short bitField;
-        readonly attribute boolean isRange;
-        readonly attribute boolean isStringRange;
-        readonly attribute boolean isDesignatorRange;
+    enum HIDUnitSystem {
+        "none", "si-linear", "si-rotation", "english-linear",
+        "english-rotation", "vendor-defined", "reserved"
+    };
+
+    interface HIDReportItem {
         readonly attribute boolean isAbsolute;
-        readonly attribute boolean isValue;
-        readonly attribute unsigned short usageMin;
-        readonly attribute unsigned short usageMax;
-        readonly attribute unsigned short stringMin;
-        readonly attribute unsigned short stringMax;
-        readonly attribute unsigned short designatorMin;
-        readonly attribute unsigned short designatorMax;
+        readonly attribute boolean isArray;
+        readonly attribute boolean isRange;
         readonly attribute boolean hasNull;
-        readonly attribute unsigned short bitSize;
+        readonly attribute FrozenArray<unsigned long> usages;
+        readonly attribute unsigned long usageMinimum;
+        readonly attribute unsigned long usageMaximum;
+        readonly attribute unsigned short reportSize;
         readonly attribute unsigned short reportCount;
-        readonly attribute unsigned long unitsExp;
-        readonly attribute unsigned long units;
-        readonly attribute long logicalMin;
-        readonly attribute long logicalMax;
-        readonly attribute long physicalMin;
-        readonly attribute long physicalMax;
+        readonly attribute unsigned long unitExponent;
+        readonly attribute HIDUnitSystem unitSystem;
+        readonly attribute byte unitFactorLengthExponent;
+        readonly attribute byte unitFactorMassExponent;
+        readonly attribute byte unitFactorTimeExponent;
+        readonly attribute byte unitFactorTemperatureExponent;
+        readonly attribute byte unitFactorCurrentExponent;
+        readonly attribute byte unitFactorLuminousIntensityExponent;
+        readonly attribute long logicalMinimum;
+        readonly attribute long logicalMaximum;
+        readonly attribute long physicalMinimum;
+        readonly attribute long physicalMaximum;
+        readonly attribute FrozenArray<DOMString> strings;
     };
