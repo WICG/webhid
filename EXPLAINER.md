@@ -25,19 +25,19 @@ The HID protocol is popular in large part because of the ease of installation, w
 
 The example below requests a HID device by specifying its vendor and product IDs, sends an initialization packet, and listens for an input report containing a button input.
 
-    let deviceFilter = { vendorId: 0x1234, productId: 0xabcd };
-    let requestParams  = { filters: [deviceFilter] };
-    let initReport = new Uint8Array(1);
+    const deviceFilter = { vendorId: 0x1234, productId: 0xabcd };
+    const requestParams  = { filters: [deviceFilter] };
+    const initReport = new Uint8Array(1);
     initReport[0] = 42;
 
     function handleInputReport(e) {
-        // Fetch the value of the first button in the report.
-        let buttonValue = e.data;
-        console.log('Button value is ' + buttonValue);
+        // Fetch the value of the first field in the report.
+        const fieldValue = e.data.getUint8(0);
+        console.log('Button value is ' + fieldValue);
     }
 
     navigator.hid.requestDevice(requestParams).then((devices) => {
-        let device = devices[0];
+        const device = devices[0];
         device.open().then(() => {
             console.log('Opened HID device');
             device.addEventListener('inputreport', handleInputReport);
