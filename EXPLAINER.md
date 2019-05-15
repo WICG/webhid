@@ -147,3 +147,14 @@ The IDL below is based off of the information returned by the Windows HID API an
         readonly attribute long physicalMaximum;
         readonly attribute FrozenArray<DOMString> strings;
     };
+
+## Security and privacy considerations
+
+Exposing access to HID devices also potentially exposes personally-identifiable information. Knowledge about which peripherals are connected to the host may be used to fingerprint the user. Some types of HID devices may also expose personally-identifiable information in device details (like the serial number string or product name) or through reports sent by the device to the host. To mitigate this risk, a device will only be exposed to script once the user has explicitly granted access for that device by selecting it from a chooser.
+
+HID devices may also be used to transmit high-value data. Keyboards and Universal 2nd Factor (U2F) devices are often implemented using the HID protocol and may be used to enter credential information. To mitigate the risk of exposing credentials to script, devices that use the FIDO U2F usage page (0xf1d0) are excluded from the device chooser.
+
+WebHID does not provide exclusive access to a device. If two origins have been granted access to the same device, this access can potentially be used to send and receive data between origins by manipulating the state stored on the device.
+
+WebHID may expose additional aspects of a user's local computing environment. Once an origin has been granted access to a device, it can inspect the device details and determine whether the device has been disconnected. In some cases, a peripheral may have capabilities which allow it to expose additional information about the local computing environment like nearby wireless networks.
+
