@@ -92,12 +92,7 @@ devices that have already been granted access.
 
 ### 17. [Does this specification allow downgrading default security characteristics?](https://www.w3.org/TR/security-privacy-questionnaire/#relaxed-sop) 
 
-**Yes**.  A WoT Thing Description describes what a WoT Thing does and
-requires, no more and no less.
-There is however an option in the WoT Thing Description to specify
-use of one of several different alternative security mechanisms to access a resource.
-The designer of a WoT Server needs to ensure that the least secure alternative
-is sufficiently secure for the intended application.
+**No**
 
 ## Mitigations
 
