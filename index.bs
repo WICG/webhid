@@ -39,6 +39,7 @@ A HID (Human Interface Device) is a type of device that takes input from or prov
 
 The web platform already supports input from many HID devices. Keyboards, pointing devices, and gamepads are all typically implemented using the HID protocol. However, this support relies on the operating system's HID drivers that transform the HID input into high-level input APIs. Devices that are not well supported by the host's HID driver are often inaccessible to web pages. Similarly, the outputs on most devices that are not supported by the host's HID driver are inaccessible.
 
+See also the related <a href="https://github.com/WICG/webhid/blob/gh-pages/EXPLAINER.md">Explainer</a> document.
 
 # Motivating Applications # {#motivating-applications}
 
