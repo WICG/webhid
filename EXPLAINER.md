@@ -1,5 +1,7 @@
 # WebHID Explainer
 
+This document is an explainer for the [HID API](https://wicg.github.io/webhid/), a proposed specification for allowing a web page to communicate with HID devices.
+
 <!-- TOC -->
 <!-- /TOC -->
 
