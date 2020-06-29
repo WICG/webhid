@@ -7,7 +7,7 @@ Level: 1
 Editor: Matt Reynolds 105511, Google LLC https://www.google.com, mattreynolds@google.com
 Abstract: This document describes an API for providing access to devices that support the Human Interface Device (HID) protocol.
 Group: wicg
-Repository: https://github.com/nondebug/webhid
+Repository: WICG/webhid
 </pre>
 
 <style>
