@@ -1,6 +1,6 @@
 # WebHID Explainer
 
-This document is an explainer for the [HID API](https://wicg.github.io/webhid/), a proposed specification for allowing a web page to communicate with HID devices.
+This document is an explainer for the [WebHID API](https://wicg.github.io/webhid/), a proposed specification for allowing a web page to communicate with HID devices.
 
 <!-- TOC -->
 <!-- /TOC -->
@@ -25,26 +25,37 @@ The HID protocol is popular in large part because of the ease of installation, w
 
 ## Example
 
-The example below requests a HID device by specifying its vendor and product IDs, sends an initialization packet, and listens for an input report containing a button input.
+The example below requests a HID device by specifying its vendor and product IDs, sends an initialization packet, and listens for input reports and connection events.
 
     let deviceFilter = { vendorId: 0x1234, productId: 0xabcd };
     let requestParams  = { filters: [deviceFilter] };
-    let initReport = new Uint8Array(1);
-    initReport[0] = 42;
+    let outputReportId = 0x01;
+    let outputReport = new Uint8Array([42]);
 
-    function handleInputReport(e) {
-        // Fetch the value of the first button in the report.
-        let buttonValue = e.data;
-        console.log('Button value is ' + buttonValue);
+    function handleConnectedDevice(e) {
+        console.log('Device connected: ' + e.device.productName);
     }
 
+    function handleDisconnectedDevice(e) {
+        console.log('Device disconnected: ' + e.device.productName);
+    }
+
+    function handleInputReport(e) {
+        console.log(e.device.productName + ': got input report ' + e.reportId);
+        console.log(new Uint8Array(e.data.buffer));
+    }
+
+    navigator.hid.addEventListener('connect', handleConnectedDevice);
+    navigator.hid.addEventListener('disconnect', handleDisconnectedDevice);
+
     navigator.hid.requestDevice(requestParams).then((devices) => {
-        let device = devices[0];
-        device.open().then(() => {
-            console.log('Opened HID device');
+        if (devices.length == 0)
+          return;
+        devices[0].open().then(() => {
+            console.log('Opened device: ' + device.productName);
             device.addEventListener('inputreport', handleInputReport);
-            device.sendReport(0x01, initReport).then(() => {
-                console.log('Sent initialization packet');
+            device.sendReport(outputReportId, outputReport).then(() => {
+                console.log('Sent output report ' + outputReportId);
             });
         });
     });
@@ -57,7 +68,7 @@ The globally accessible component of the WebHID API is attached to the navigator
         readonly attribute HID hid;
     };
 
-The `navigator.hid` member allows the page to register event listeners for connection events. The page can request an array of all devices currently accessible by the page with `getDevices`. For security reasons, no HID devices are available by default. The page may call `requestDevice` to display a chooser dialog where the user can select from connected HID devices. Once the selection is completed, the `Promise` returned by `requestDevice` resolves to an array of `HIDDevice` objects.
+The `navigator.hid` member supports registration of event listeners for connect and disconnect events. The page can request an array of all devices currently accessible by the page with `getDevices`. For security reasons, no HID devices are available by default. The page may call `requestDevice` to display a chooser dialog where the user can select from connected HID devices. Once the selection is completed, the `Promise` returned by `requestDevice` resolves to a `sequence<HIDDevice>`.
 
     interface HID : EventTarget {
         attribute EventHandler onconnect;
@@ -65,6 +76,10 @@ The `navigator.hid` member allows the page to register event listeners for conne
         Promise<sequence<HIDDevice>> getDevices();
         Promise<sequence<HIDDevice>> requestDevice(HIDDeviceRequestOptions options);
     };
+
+    interface HIDConnectionEvent : Event {
+        readonly attribute HIDDevice device;
+    }
 
     interface HIDInputReportEvent : Event {
         readonly attribute HIDDevice device;
@@ -85,7 +100,7 @@ The `navigator.hid` member allows the page to register event listeners for conne
 
 The returned `HIDDevice` objects contain vendor and product ID values for device identification. The devices are returned in the closed state and must be opened before data can be sent or received. The collection attribute is initialized with a hierarchical description of the device's report formats.
 
-Once opened, the `HIDDevice` object can be used to send output reports with `sendReport` or listen for input reports by registering an `oninputreport` event listener. Feature reports can be sent and received with `setFeatureReport` and `receiveFeatureReport`. All methods return a `Promise` that resolves once the operation is complete.
+Once opened, the `HIDDevice` object can be used to send output reports with `sendReport` or listen for input reports by registering an `oninputreport` event listener. Feature reports can be sent and received with `sendFeatureReport` and `receiveFeatureReport`. All methods return a `Promise` that resolves once the operation is complete.
 
     interface HIDDevice {
         attribute EventHandler oninputreport;
@@ -97,14 +112,11 @@ Once opened, the `HIDDevice` object can be used to send output reports with `sen
         Promise<void> open();
         Promise<void> close();
         Promise<void> sendReport(octet reportId, BufferSource data);
-        Promise<void> setOutputReport(octet reportId, BufferSource data);
-        Promise<void> setFeatureReport(octet reportId, BufferSource data);
-        Promise<DataView> getFeatureReport(octet reportId);
+        Promise<void> sendFeatureReport(octet reportId, BufferSource data);
+        Promise<DataView> receiveFeatureReport(octet reportId);
     };
 
-The information contained in the report descriptor is not needed to communicate with the device, but may be useful for applications that rely on the report's characteristics to recognize supported devices. (For instance, an app may not care if a device has other inputs as long as it has at least one button.) It also serves as a guide for parsing data from input reports. Convenience methods `getField` and `setField` allow simpler access to field values within the report buffer.
-
-The IDL below is based off of the information returned by the Windows HID API and is likely to change. On Windows it is not possible to retrieve the full report descriptor from a HID device; instead, applications can query device capabilities from a "preparsed data" buffer to receive equivalent information for a particular collection. To ensure the WebHID API can expose collection information on Windows, `HIDCollectionInfo` will aim to expose a subset of the information available through the Windows HID API.
+The information contained in the report descriptor is not needed to communicate with the device, but may be useful for applications that rely on the report's characteristics to recognize supported devices. (For instance, an app may not care if a device has other inputs as long as it has at least one button.) It also serves as a guide for parsing data from input reports.
 
     interface HIDCollectionInfo {
         readonly attribute unsigned short usagePage;
@@ -121,8 +133,18 @@ The IDL below is based off of the information returned by the Windows HID API an
     };
 
     enum HIDUnitSystem {
-        "none", "si-linear", "si-rotation", "english-linear",
-        "english-rotation", "vendor-defined", "reserved"
+        // No unit system in use.
+        "none",
+        // Centimeter, gram, seconds, kelvin, ampere, candela.
+        "si-linear",
+        // Radians, gram, seconds, kelvin, ampere, candela.
+        "si-rotation",
+        // Inch, slug, seconds, Fahrenheit, ampere, candela.
+        "english-linear",
+        // Degrees, slug, seconds, Fahrenheit, ampere, candela.
+        "english-rotation",
+        "vendor-defined",
+        "reserved",
     };
 
     interface HIDReportItem {
