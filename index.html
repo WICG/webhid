@@ -262,10 +262,12 @@ requestButton.addEventListener('click', async () => {
     }]});
     device = devices[0];
   } catch (error) {
-    console.log('No device was selected.');
+    console.log('An error occured.');
   }
 
-  if (device !== undefined) {
+  if (device === undefined) {
+    console.log('No device was selected.');
+  } else {
     console.log('HID: ${device.productName}');
   }
 });
