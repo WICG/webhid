@@ -103,7 +103,7 @@ dictionary HIDDeviceFilter {
 };
 ```
 
-The returned `HIDDevice` objects contain vendor and product ID values for device identification. The devices are returned in the closed state and must be opened before data can be sent or received. The collection attribute is initialized with a hierarchical description of the device's report formats.
+The returned `HIDDevice` objects contain vendor and product ID values for device identification. The devices are returned in the closed state and must be opened before data can be sent or received. The `collections` attribute is initialized with a hierarchical description of the device's report formats.
 
 Once opened, the `HIDDevice` object can be used to send output reports with `sendReport` or listen for input reports by registering an `oninputreport` event listener. Feature reports can be sent and received with `sendFeatureReport` and `receiveFeatureReport`. All methods return a `Promise` that resolves once the operation is complete.
 
