@@ -458,9 +458,9 @@ dictionary HIDFieldOptions {
     readonly attribute FrozenArray&lt;HIDCollectionInfo&gt; collections;
     Promise&lt;void&gt; open();
     Promise&lt;void&gt; close();
-    Promise&lt;void&gt; sendReport(octet reportId, BufferSource data);
-    Promise&lt;void&gt; sendFeatureReport(octet reportId, BufferSource data);
-    Promise&lt;DataView&gt; receiveFeatureReport(octet reportId);
+    Promise&lt;void&gt; sendReport([EnforceRange] octet reportId, BufferSource data);
+    Promise&lt;void&gt; sendFeatureReport([EnforceRange] octet reportId, BufferSource data);
+    Promise&lt;DataView&gt; receiveFeatureReport([EnforceRange] octet reportId);
 };
       </pre>
     </section>
