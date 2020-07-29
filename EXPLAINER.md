@@ -117,9 +117,9 @@ interface HIDDevice {
     readonly attribute FrozenArray<HIDCollectionInfo> collections;
     Promise<void> open();
     Promise<void> close();
-    Promise<void> sendReport(octet reportId, BufferSource data);
-    Promise<void> sendFeatureReport(octet reportId, BufferSource data);
-    Promise<DataView> receiveFeatureReport(octet reportId);
+    Promise<void> sendReport([EnforceRange] octet reportId, BufferSource data);
+    Promise<void> sendFeatureReport([EnforceRange] octet reportId, BufferSource data);
+    Promise<DataView> receiveFeatureReport([EnforceRange] octet reportId);
 };
 ```
 
