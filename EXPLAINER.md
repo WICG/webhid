@@ -1,5 +1,7 @@
 # WebHID Explainer
 
+This document is an explainer for the [WebHID API](https://wicg.github.io/webhid/), a proposed specification for allowing a web page to communicate with HID devices.
+
 <!-- TOC -->
 <!-- /TOC -->
 
@@ -23,138 +25,158 @@ The HID protocol is popular in large part because of the ease of installation, w
 
 ## Example
 
-The example below requests a HID device by specifying its vendor and product IDs, sends an initialization packet, and listens for an input report containing a button input.
+The example below requests a HID device by specifying its vendor and product IDs, sends an initialization packet, and listens for input reports and connection events.
 
-    const deviceFilter = { vendorId: 0x1234, productId: 0xabcd };
-    const requestParams  = { filters: [deviceFilter] };
-    const initReport = new Uint8Array(1);
-    initReport[0] = 42;
+```js
+let deviceFilter = { vendorId: 0x1234, productId: 0xabcd };
+let requestParams = { filters: [deviceFilter] };
+let outputReportId = 0x01;
+let outputReport = new Uint8Array([42]);
 
-    function handleInputReport(e) {
-        // Fetch the value of the first field in the report.
-        const fieldValue = e.data.getUint8(0);
-        console.log('Button value is ' + fieldValue);
-    }
+function handleConnectedDevice(e) {
+  console.log("Device connected: " + e.device.productName);
+}
 
-    navigator.hid.requestDevice(requestParams).then((devices) => {
-        const device = devices[0];
-        device.open().then(() => {
-            console.log('Opened HID device');
-            device.addEventListener('inputreport', handleInputReport);
-            device.sendReport(0x01, initReport).then(() => {
-                console.log('Sent initialization packet');
-            });
-        });
+function handleDisconnectedDevice(e) {
+  console.log("Device disconnected: " + e.device.productName);
+}
+
+function handleInputReport(e) {
+  console.log(e.device.productName + ": got input report " + e.reportId);
+  console.log(new Uint8Array(e.data.buffer));
+}
+
+navigator.hid.addEventListener("connect", handleConnectedDevice);
+navigator.hid.addEventListener("disconnect", handleDisconnectedDevice);
+
+navigator.hid.requestDevice(requestParams).then((devices) => {
+  if (devices.length == 0) return;
+  devices[0].open().then(() => {
+    console.log("Opened device: " + device.productName);
+    device.addEventListener("inputreport", handleInputReport);
+    device.sendReport(outputReportId, outputReport).then(() => {
+      console.log("Sent output report " + outputReportId);
     });
+  });
+});
+```
 
 ## Proposed IDL
 
 The globally accessible component of the WebHID API is attached to the navigator interface as `navigator.hid`.
 
-    partial interface Navigator {
-        readonly attribute HID hid;
-    };
+```webidl
+partial interface Navigator {
+    readonly attribute HID hid;
+};
+```
 
-The `navigator.hid` member allows the page to register event listeners for connection events. The page can request an array of all devices currently accessible by the page with `getDevices`. For security reasons, no HID devices are available by default. The page may call `requestDevice` to display a chooser dialog where the user can select from connected HID devices. Once the selection is completed, the `Promise` returned by `requestDevice` resolves to an array of `HIDDevice` objects.
+The `navigator.hid` member supports registration of event listeners for connect and disconnect events. The page can request an array of all devices currently accessible by the page with `getDevices`. For security reasons, no HID devices are available by default. The page may call `requestDevice` to display a chooser dialog where the user can select from connected HID devices. Once the selection is completed, the `Promise` returned by `requestDevice` resolves to a `sequence<HIDDevice>`.
 
-    interface HID : EventTarget {
-        attribute EventHandler onconnect;
-        attribute EventHandler ondisconnect;
-        Promise<sequence<HIDDevice>> getDevices();
-        Promise<sequence<HIDDevice>> requestDevice(HIDDeviceRequestOptions options);
-    };
+```webidl
+interface HID : EventTarget {
+    attribute EventHandler onconnect;
+    attribute EventHandler ondisconnect;
+    Promise<sequence<HIDDevice>> getDevices();
+    Promise<sequence<HIDDevice>> requestDevice(HIDDeviceRequestOptions options);
+};
 
-    interface HIDInputReportEvent : Event {
-        readonly attribute HIDDevice device;
-        readonly attribute octet reportId;
-        readonly attribute DataView data;
-    };
+interface HIDConnectionEvent : Event {
+    readonly attribute HIDDevice device;
+}
 
-    dictionary HIDDeviceRequestOptions {
-        sequence<HIDDeviceFilter> filters;
-    };
+interface HIDInputReportEvent : Event {
+    readonly attribute HIDDevice device;
+    readonly attribute octet reportId;
+    readonly attribute DataView data;
+};
 
-    dictionary HIDDeviceFilter {
-        unsigned long vendorId;
-        unsigned short productId;
-        unsigned short usagePage;
-        unsigned short usage;
-    };
+dictionary HIDDeviceRequestOptions {
+    required sequence<HIDDeviceFilter> filters;
+};
 
-The returned `HIDDevice` objects contain vendor and product ID values for device identification. The devices are returned in the closed state and must be opened before data can be sent or received. The collection attribute is initialized with a hierarchical description of the device's report formats.
+dictionary HIDDeviceFilter {
+    unsigned long vendorId;
+    unsigned short productId;
+    unsigned short usagePage;
+    unsigned short usage;
+};
+```
 
-Once opened, the `HIDDevice` object can be used to send output reports with `sendReport` or listen for input reports by registering an `oninputreport` event listener. Feature reports can be sent and received with `setFeatureReport` and `receiveFeatureReport`. All methods return a `Promise` that resolves once the operation is complete.
+The returned `HIDDevice` objects contain vendor and product ID values for device identification. The devices are returned in the closed state and must be opened before data can be sent or received. The `collections` attribute is initialized with a hierarchical description of the device's report formats.
 
-    interface HIDDevice {
-        attribute EventHandler oninputreport;
-        readonly attribute boolean opened;
-        readonly attribute unsigned short vendorId;
-        readonly attribute unsigned short productId;
-        readonly attribute DOMString productName;
-        readonly attribute FrozenArray<HIDCollectionInfo> collections;
-        Promise<void> open();
-        Promise<void> close();
-        Promise<void> sendReport(octet reportId, BufferSource data);
-        Promise<void> setOutputReport(octet reportId, BufferSource data);
-        Promise<void> setFeatureReport(octet reportId, BufferSource data);
-        Promise<DataView> getFeatureReport(octet reportId);
-    };
+Once opened, the `HIDDevice` object can be used to send output reports with `sendReport` or listen for input reports by registering an `oninputreport` event listener. Feature reports can be sent and received with `sendFeatureReport` and `receiveFeatureReport`. All methods return a `Promise` that resolves once the operation is complete.
 
-The information contained in the report descriptor is not needed to communicate with the device, but may be useful for applications that rely on the report's characteristics to recognize supported devices. (For instance, an app may not care if a device has other inputs as long as it has at least one button.) It also serves as a guide for parsing data from input reports. Convenience methods `getField` and `setField` allow simpler access to field values within the report buffer.
+```webidl
+interface HIDDevice {
+    attribute EventHandler oninputreport;
+    readonly attribute boolean opened;
+    readonly attribute unsigned short vendorId;
+    readonly attribute unsigned short productId;
+    readonly attribute DOMString productName;
+    readonly attribute FrozenArray<HIDCollectionInfo> collections;
+    Promise<void> open();
+    Promise<void> close();
+    Promise<void> sendReport([EnforceRange] octet reportId, BufferSource data);
+    Promise<void> sendFeatureReport([EnforceRange] octet reportId, BufferSource data);
+    Promise<DataView> receiveFeatureReport([EnforceRange] octet reportId);
+};
+```
 
-The IDL below is based off of the information returned by the Windows HID API and is likely to change. On Windows it is not possible to retrieve the full report descriptor from a HID device; instead, applications can query device capabilities from a "preparsed data" buffer to receive equivalent information for a particular collection. To ensure the WebHID API can expose collection information on Windows, `HIDCollectionInfo` will aim to expose a subset of the information available through the Windows HID API.
+The information contained in the report descriptor is not needed to communicate with the device, but may be useful for applications that rely on the report's characteristics to recognize supported devices. (For instance, an app may not care if a device has other inputs as long as it has at least one button.) It also serves as a guide for parsing data from input reports.
 
-    interface HIDCollectionInfo {
-        readonly attribute unsigned short usagePage;
-        readonly attribute unsigned short usage;
-        readonly attribute FrozenArray<HIDCollectionInfo> children;
-        readonly attribute FrozenArray<HIDReportInfo> inputReports;
-        readonly attribute FrozenArray<HIDReportInfo> outputReports;
-        readonly attribute FrozenArray<HIDReportInfo> featureReports;
-    };
+```webidl
+interface HIDCollectionInfo {
+    readonly attribute unsigned short usagePage;
+    readonly attribute unsigned short usage;
+    readonly attribute FrozenArray<HIDCollectionInfo> children;
+    readonly attribute FrozenArray<HIDReportInfo> inputReports;
+    readonly attribute FrozenArray<HIDReportInfo> outputReports;
+    readonly attribute FrozenArray<HIDReportInfo> featureReports;
+};
 
-    interface HIDReportInfo {
-        readonly attribute octet reportId;
-        readonly attribute FrozenArray<HIDReportItem> items;
-    };
+interface HIDReportInfo {
+    readonly attribute octet reportId;
+    readonly attribute FrozenArray<HIDReportItem> items;
+};
 
-    enum HIDUnitSystem {
-        "none", "si-linear", "si-rotation", "english-linear",
-        "english-rotation", "vendor-defined", "reserved"
-    };
+enum HIDUnitSystem {
+    // No unit system in use.
+    "none",
+    // Centimeter, gram, seconds, kelvin, ampere, candela.
+    "si-linear",
+    // Radians, gram, seconds, kelvin, ampere, candela.
+    "si-rotation",
+    // Inch, slug, seconds, Fahrenheit, ampere, candela.
+    "english-linear",
+    // Degrees, slug, seconds, Fahrenheit, ampere, candela.
+    "english-rotation",
+    "vendor-defined",
+    "reserved",
+};
 
-    interface HIDReportItem {
-        readonly attribute boolean isAbsolute;
-        readonly attribute boolean isArray;
-        readonly attribute boolean isRange;
-        readonly attribute boolean hasNull;
-        readonly attribute FrozenArray<unsigned long> usages;
-        readonly attribute unsigned long usageMinimum;
-        readonly attribute unsigned long usageMaximum;
-        readonly attribute unsigned short reportSize;
-        readonly attribute unsigned short reportCount;
-        readonly attribute unsigned long unitExponent;
-        readonly attribute HIDUnitSystem unitSystem;
-        readonly attribute byte unitFactorLengthExponent;
-        readonly attribute byte unitFactorMassExponent;
-        readonly attribute byte unitFactorTimeExponent;
-        readonly attribute byte unitFactorTemperatureExponent;
-        readonly attribute byte unitFactorCurrentExponent;
-        readonly attribute byte unitFactorLuminousIntensityExponent;
-        readonly attribute long logicalMinimum;
-        readonly attribute long logicalMaximum;
-        readonly attribute long physicalMinimum;
-        readonly attribute long physicalMaximum;
-        readonly attribute FrozenArray<DOMString> strings;
-    };
-
-## Security and privacy considerations
-
-Exposing access to HID devices also potentially exposes personally-identifiable information. Knowledge about which peripherals are connected to the host may be used to fingerprint the user. Some types of HID devices may also expose personally-identifiable information in device details (like the serial number string or product name) or through reports sent by the device to the host. To mitigate this risk, a device will only be exposed to script once the user has explicitly granted access for that device by selecting it from a chooser.
-
-HID devices may also be used to transmit high-value data. Keyboards and Universal 2nd Factor (U2F) devices are often implemented using the HID protocol and may be used to enter credential information. To mitigate the risk of exposing credentials to script, devices that use the FIDO U2F usage page (0xf1d0) are excluded from the device chooser.
-
-WebHID does not provide exclusive access to a device. If two origins have been granted access to the same device, this access can potentially be used to send and receive data between origins by manipulating the state stored on the device.
-
-WebHID may expose additional aspects of a user's local computing environment. Once an origin has been granted access to a device, it can inspect the device details and determine whether the device has been disconnected. In some cases, a peripheral may have capabilities which allow it to expose additional information about the local computing environment like nearby wireless networks.
-
+interface HIDReportItem {
+    readonly attribute boolean isAbsolute;
+    readonly attribute boolean isArray;
+    readonly attribute boolean isRange;
+    readonly attribute boolean hasNull;
+    readonly attribute FrozenArray<unsigned long> usages;
+    readonly attribute unsigned long usageMinimum;
+    readonly attribute unsigned long usageMaximum;
+    readonly attribute unsigned short reportSize;
+    readonly attribute unsigned short reportCount;
+    readonly attribute byte unitExponent;
+    readonly attribute HIDUnitSystem unitSystem;
+    readonly attribute byte unitFactorLengthExponent;
+    readonly attribute byte unitFactorMassExponent;
+    readonly attribute byte unitFactorTimeExponent;
+    readonly attribute byte unitFactorTemperatureExponent;
+    readonly attribute byte unitFactorCurrentExponent;
+    readonly attribute byte unitFactorLuminousIntensityExponent;
+    readonly attribute long logicalMinimum;
+    readonly attribute long logicalMaximum;
+    readonly attribute long physicalMinimum;
+    readonly attribute long physicalMaximum;
+    readonly attribute FrozenArray<DOMString> strings;
+};
+```
