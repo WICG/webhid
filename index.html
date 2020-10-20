@@ -222,7 +222,7 @@ interface HID : EventTarget {
 document.addEventListener('DOMContentLoaded', async () => {
   let devices = await navigator.hid.getDevices();
   devices.forEach(device => {
-    console.log('HID: ${device.productName}');
+    console.log(`HID: ${device.productName}`);
   });
 });
         </pre>
@@ -231,12 +231,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           devices.
         </p>
         <pre class="highlight">
-navigator.hid.addEventListener('connect', async () => {
-  console.log('HID connected: ${device.productName}');
+navigator.hid.addEventListener('connect', ({device}) => {
+  console.log(`HID connected: ${device.productName}`);
 });
 
-navigator.hid.addEventListener('disconnect', async () => {
-  console.log('HID disconnected: ${device.productName}');
+navigator.hid.addEventListener('disconnect', ({device}) => {
+  console.log(`HID disconnected: ${device.productName}`);
 });
         </pre>
         <p>
@@ -268,7 +268,7 @@ requestButton.addEventListener('click', async () => {
   if (device === undefined) {
     console.log('No device was selected.');
   } else {
-    console.log('HID: ${device.productName}');
+    console.log(`HID: ${device.productName}`);
   }
 });
         </pre>
