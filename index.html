@@ -232,11 +232,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         </p>
         <pre class="highlight">
 navigator.hid.addEventListener('connect', async () => {
-  console.log('HID connected: ${device.productName}');
+  console.log(`HID connected: ${device.productName}`);
 });
 
 navigator.hid.addEventListener('disconnect', async () => {
-  console.log('HID disconnected: ${device.productName}');
+  console.log(`HID disconnected: ${device.productName}`);
 });
         </pre>
         <p>
