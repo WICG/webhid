@@ -222,7 +222,7 @@ interface HID : EventTarget {
 document.addEventListener('DOMContentLoaded', async () => {
   let devices = await navigator.hid.getDevices();
   devices.forEach(device => {
-    console.log('HID: ${device.productName}');
+    console.log(`HID: ${device.productName}`);
   });
 });
         </pre>
