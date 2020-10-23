@@ -205,32 +205,32 @@
         Device Enumeration
       </h2>
       <pre class="idl">
-dictionary HIDDeviceFilter {
-    unsigned long vendorId;
-    unsigned short productId;
-    unsigned short usagePage;
-    unsigned short usage;
-};
+        dictionary HIDDeviceFilter {
+            unsigned long vendorId;
+            unsigned short productId;
+            unsigned short usagePage;
+            unsigned short usage;
+        };
 
-dictionary HIDDeviceRequestOptions {
-    required sequence&lt;HIDDeviceFilter&gt; filters;
-};
+        dictionary HIDDeviceRequestOptions {
+            required sequence&lt;HIDDeviceFilter&gt; filters;
+        };
 
-[
-    Exposed=Window,
-    SecureContext
-]
-interface HID : EventTarget {
-    attribute EventHandler onconnect;
-    attribute EventHandler ondisconnect;
-    Promise&lt;sequence&lt;HIDDevice&gt;&gt; getDevices();
-    Promise&lt;sequence&lt;HIDDevice&gt;&gt; requestDevice(
-        HIDDeviceRequestOptions options);
-};
+        [
+            Exposed=Window,
+            SecureContext
+        ]
+        interface HID : EventTarget {
+            attribute EventHandler onconnect;
+            attribute EventHandler ondisconnect;
+            Promise&lt;sequence&lt;HIDDevice&gt;&gt; getDevices();
+            Promise&lt;sequence&lt;HIDDevice&gt;&gt; requestDevice(
+                HIDDeviceRequestOptions options);
+        };
 
-[SecureContext] partial interface Navigator {
-    [SameObject] readonly attribute HID hid;
-};
+        [SecureContext] partial interface Navigator {
+            [SameObject] readonly attribute HID hid;
+        };
       </pre>
       <aside class="example">
         <p>
@@ -361,33 +361,33 @@ interface HID : EventTarget {
           Events
         </h3>
         <pre class="idl">
-dictionary HIDConnectionEventInit : EventInit {
-    required HIDDevice device;
-};
+          dictionary HIDConnectionEventInit : EventInit {
+              required HIDDevice device;
+          };
 
-[
-    Exposed=Window,
-    SecureContext
-] interface HIDConnectionEvent : Event {
-    constructor(DOMString type, HIDConnectionEventInit eventInitDict);
-    [SameObject] readonly attribute HIDDevice device;
-};
+          [
+              Exposed=Window,
+              SecureContext
+          ] interface HIDConnectionEvent : Event {
+              constructor(DOMString type, HIDConnectionEventInit eventInitDict);
+              [SameObject] readonly attribute HIDDevice device;
+          };
 
-dictionary HIDInputReportEventInit : EventInit {
-    required HIDDevice device;
-    required octet reportId;
-    required DataView data;
-};
+          dictionary HIDInputReportEventInit : EventInit {
+              required HIDDevice device;
+              required octet reportId;
+              required DataView data;
+          };
 
-[
-    Exposed=Window,
-    SecureContext
-] interface HIDInputReportEvent : Event {
-    constructor(DOMString type, HIDInputReportEventInit eventInitDict);
-    [SameObject] readonly attribute HIDDevice device;
-    readonly attribute octet reportId;
-    readonly attribute DataView data;
-};
+          [
+              Exposed=Window,
+              SecureContext
+          ] interface HIDInputReportEvent : Event {
+              constructor(DOMString type, HIDInputReportEventInit eventInitDict);
+              [SameObject] readonly attribute HIDDevice device;
+              readonly attribute octet reportId;
+              readonly attribute DataView data;
+          };
         </pre>
       </section>
       <section id='report-descriptor'>
@@ -395,49 +395,49 @@ dictionary HIDInputReportEventInit : EventInit {
           HID Collection and Report Information
         </h3>
         <pre class="idl">
-enum HIDUnitSystem {
-    "none", "si-linear", "si-rotation", "english-linear",
-    "english-rotation", "vendor-defined", "reserved"
-};
+          enum HIDUnitSystem {
+              "none", "si-linear", "si-rotation", "english-linear",
+              "english-rotation", "vendor-defined", "reserved"
+          };
 
-dictionary HIDReportItem {
-    boolean isAbsolute;
-    boolean isArray;
-    boolean isRange;
-    boolean hasNull;
-    sequence&lt;unsigned long&gt; usages;
-    unsigned long usageMinimum;
-    unsigned long usageMaximum;
-    unsigned short reportSize;
-    unsigned short reportCount;
-    byte unitExponent;
-    HIDUnitSystem unitSystem;
-    byte unitFactorLengthExponent;
-    byte unitFactorMassExponent;
-    byte unitFactorTimeExponent;
-    byte unitFactorTemperatureExponent;
-    byte unitFactorCurrentExponent;
-    byte unitFactorLuminousIntensityExponent;
-    long logicalMinimum;
-    long logicalMaximum;
-    long physicalMinimum;
-    long physicalMaximum;
-    sequence&lt;DOMString&gt; strings;
-};
+          dictionary HIDReportItem {
+              boolean isAbsolute;
+              boolean isArray;
+              boolean isRange;
+              boolean hasNull;
+              sequence&lt;unsigned long&gt; usages;
+              unsigned long usageMinimum;
+              unsigned long usageMaximum;
+              unsigned short reportSize;
+              unsigned short reportCount;
+              byte unitExponent;
+              HIDUnitSystem unitSystem;
+              byte unitFactorLengthExponent;
+              byte unitFactorMassExponent;
+              byte unitFactorTimeExponent;
+              byte unitFactorTemperatureExponent;
+              byte unitFactorCurrentExponent;
+              byte unitFactorLuminousIntensityExponent;
+              long logicalMinimum;
+              long logicalMaximum;
+              long physicalMinimum;
+              long physicalMaximum;
+              sequence&lt;DOMString&gt; strings;
+          };
 
-dictionary HIDReportInfo {
-    octet reportId;
-    sequence&lt;HIDReportItem&gt; items;
-};
+          dictionary HIDReportInfo {
+              octet reportId;
+              sequence&lt;HIDReportItem&gt; items;
+          };
 
-dictionary HIDCollectionInfo {
-    unsigned short usagePage;
-    unsigned short usage;
-    sequence&lt;HIDCollectionInfo&gt; children;
-    sequence&lt;HIDReportInfo&gt; inputReports;
-    sequence&lt;HIDReportInfo&gt; outputReports;
-    sequence&lt;HIDReportInfo&gt; featureReports;
-};
+          dictionary HIDCollectionInfo {
+              unsigned short usagePage;
+              unsigned short usage;
+              sequence&lt;HIDCollectionInfo&gt; children;
+              sequence&lt;HIDReportInfo&gt; inputReports;
+              sequence&lt;HIDReportInfo&gt; outputReports;
+              sequence&lt;HIDReportInfo&gt; featureReports;
+          };
         </pre>
       </section>
     </section>
@@ -446,22 +446,22 @@ dictionary HIDCollectionInfo {
         Device Usage
       </h2>
       <pre class="idl">
-[
-    Exposed=Window,
-    SecureContext
-] interface HIDDevice : EventTarget {
-    attribute EventHandler oninputreport;
-    readonly attribute boolean opened;
-    readonly attribute unsigned short vendorId;
-    readonly attribute unsigned short productId;
-    readonly attribute DOMString productName;
-    readonly attribute FrozenArray&lt;HIDCollectionInfo&gt; collections;
-    Promise&lt;undefined&gt; open();
-    Promise&lt;undefined&gt; close();
-    Promise&lt;undefined&gt; sendReport([EnforceRange] octet reportId, BufferSource data);
-    Promise&lt;undefined&gt; sendFeatureReport([EnforceRange] octet reportId, BufferSource data);
-    Promise&lt;DataView&gt; receiveFeatureReport([EnforceRange] octet reportId);
-};
+        [
+            Exposed=Window,
+            SecureContext
+        ] interface HIDDevice : EventTarget {
+            attribute EventHandler oninputreport;
+            readonly attribute boolean opened;
+            readonly attribute unsigned short vendorId;
+            readonly attribute unsigned short productId;
+            readonly attribute DOMString productName;
+            readonly attribute FrozenArray&lt;HIDCollectionInfo&gt; collections;
+            Promise&lt;undefined&gt; open();
+            Promise&lt;undefined&gt; close();
+            Promise&lt;undefined&gt; sendReport([EnforceRange] octet reportId, BufferSource data);
+            Promise&lt;undefined&gt; sendFeatureReport([EnforceRange] octet reportId, BufferSource data);
+            Promise&lt;DataView&gt; receiveFeatureReport([EnforceRange] octet reportId);
+        };
       </pre>
     </section>
     <section id='integrations'>
