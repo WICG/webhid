@@ -199,6 +199,24 @@
           explicit consent.
         </p>
       </section>
+      <section id='mitigation'>
+        <h3>
+          Mitigation
+        </h3>
+        <p>
+          To mitigate security and privacy risks, it is recommended that
+          user agents implement a chooser-based flow for requesting device
+          access. When a page requests access to a HID device, the user
+          agent should display a dialog that informs the user that the
+          page wants to access a device. The dialog should display a list
+          of connected HID devices and ask the user to select a device
+          that will be exposed to the page. To reduce the possibility of
+          accidental clicks, the dialog should require two separate
+          interactions: one interaction to select the device from the list
+          and a second interaction to confirm the selection and dismiss
+          the dialog.
+        </p>
+      </section>
     </section>
     <section id='enumeration'>
       <h2>
