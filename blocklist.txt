@@ -1,0 +1,30 @@
+// This file holds a list of filters to match devices, collections, and
+// reports that websites using the WebHID API are forbidden from accessing.
+//
+// Each filter rule may specify device-level properties (vendor, product),
+// top-level-collection properties (usagePage, usage), and report
+// properties (reportId, reportType). All of the properties for a filter
+// rule must match for the rule to apply. Omitted properties match any
+// value.
+//
+// Examples:
+//   // Blocks access to all devices from vendor BABE.
+//   {vendor:0xBABE},
+//   // Blocks access to product BAAD from vendor 6666.
+//   {vendor:0x6666, product:0xBAAD},
+//   // Blocks access to reports contained in top-level collections with
+//   // vendor-defined usage page 0xFF00 on products from vendor DADA.
+//   {vendor:0xDADA, usagePage:0xFF00},
+//   // Blocks access to feature reports on all products from vendor B0BA.
+//   {vendor:0xB0BA, reportType:"feature"},
+//   // Blocks access to input, output, and feature reports with report ID
+//   // 0x42 on product 1234 from vendor ABCD.
+//   {vendor:0xABCD, product:0x1234, reportId:0x42},
+//
+// Additions to this file must be made by pull request. Please include a
+// comment describing the blocked functionality.
+
+[
+  // Block FIDO HID U2F functionality.
+  {usagePage:0xF1D0},
+]
