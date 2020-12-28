@@ -421,8 +421,14 @@
           dictionary HIDReportItem {
               boolean isAbsolute;
               boolean isArray;
+              boolean isBufferedBytes;
+              boolean isConstant;
+              boolean isLinear;
               boolean isRange;
+              boolean isVolatile;
               boolean hasNull;
+              boolean hasPreferredState;
+              boolean wrap;
               sequence&lt;unsigned long&gt; usages;
               unsigned long usageMinimum;
               unsigned long usageMaximum;
