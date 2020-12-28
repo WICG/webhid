@@ -158,8 +158,14 @@ enum HIDUnitSystem {
 interface HIDReportItem {
     readonly attribute boolean isAbsolute;
     readonly attribute boolean isArray;
+    readonly attribute boolean isBufferedBytes;
+    readonly attribute boolean isConstant;
+    readonly attribute boolean isLinear;
     readonly attribute boolean isRange;
+    readonly attribute boolean isVolatile;
     readonly attribute boolean hasNull;
+    readonly attribute boolean hasPreferredState;
+    readonly attribute boolean wrap;
     readonly attribute FrozenArray<unsigned long> usages;
     readonly attribute unsigned long usageMinimum;
     readonly attribute unsigned long usageMaximum;
