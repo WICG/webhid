@@ -129,6 +129,7 @@ The information contained in the report descriptor is not needed to communicate 
 interface HIDCollectionInfo {
     readonly attribute unsigned short usagePage;
     readonly attribute unsigned short usage;
+    readonly attribute octet type;
     readonly attribute FrozenArray<HIDCollectionInfo> children;
     readonly attribute FrozenArray<HIDReportInfo> inputReports;
     readonly attribute FrozenArray<HIDReportInfo> outputReports;
