@@ -27,4 +27,7 @@
 [
   // Block FIDO HID U2F functionality.
   {usagePage:0xF1D0},
+  
+  // Block Jabra access to certain proprietary functionality. 
+  { vendor:0x0b0e, usagePage:0xff00, reportId:0x05, reportType:"output" },
 ]
