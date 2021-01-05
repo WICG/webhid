@@ -21,8 +21,9 @@
 //   // 0x42 on product 1234 from vendor ABCD.
 //   {vendor:0xABCD, product:0x1234, reportId:0x42},
 //
-// Additions to this file must be made by pull request. Please include a
-// comment describing the blocked functionality.
+// Additions to this file can be made by pull request (for W3C members) or
+// by creating a new GitHub issue. Please include a comment describing the
+// blocked functionality.
 
 [
   // Block FIDO HID U2F functionality.
