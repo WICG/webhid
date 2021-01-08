@@ -129,6 +129,7 @@ The information contained in the report descriptor is not needed to communicate 
 interface HIDCollectionInfo {
     readonly attribute unsigned short usagePage;
     readonly attribute unsigned short usage;
+    readonly attribute octet type;
     readonly attribute FrozenArray<HIDCollectionInfo> children;
     readonly attribute FrozenArray<HIDReportInfo> inputReports;
     readonly attribute FrozenArray<HIDReportInfo> outputReports;
@@ -158,8 +159,14 @@ enum HIDUnitSystem {
 interface HIDReportItem {
     readonly attribute boolean isAbsolute;
     readonly attribute boolean isArray;
+    readonly attribute boolean isBufferedBytes;
+    readonly attribute boolean isConstant;
+    readonly attribute boolean isLinear;
     readonly attribute boolean isRange;
+    readonly attribute boolean isVolatile;
     readonly attribute boolean hasNull;
+    readonly attribute boolean hasPreferredState;
+    readonly attribute boolean wrap;
     readonly attribute FrozenArray<unsigned long> usages;
     readonly attribute unsigned long usageMinimum;
     readonly attribute unsigned long usageMaximum;
