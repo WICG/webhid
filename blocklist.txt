@@ -26,9 +26,21 @@
 // blocked functionality.
 
 [
-  // Block FIDO HID U2F functionality.
+  // Block FIDO HID U2F functionality. U2F devices should be handled by
+  // U2F or WebAuthn APIs.
   {usagePage:0xF1D0},
-  
+
+  // HID access to mouse and keyboard inputs enables the creation of input
+  // loggers and allows web pages to subvert the operating system's focus
+  // model. Block collections that expose this type of functionality.
+  {usagePage:0x0001, usage:0x0002},  // Generic Desktop / Mouse
+  {usagePage:0x0001, usage:0x0006},  // Generic Desktop / Keyboard
+  {usagePage:0x0001, usage:0x0007},  // Generic Desktop / Keypad
+
+  // Block system control functionality. System controls affect the system
+  // globally.
+  {usagePage:0x0001, usage:0x0080},  // Generic Desktop / System Control
+
   // Block Jabra access to certain proprietary functionality. 
   { vendor:0x0b0e, usagePage:0xff00, reportType:"output" },
 ]
