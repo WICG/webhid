@@ -372,38 +372,38 @@
         To <dfn data-lt="parsing the report descriptor">parse the report
         descriptor</dfn>, run the following steps:
       </p>
-      <ol>
-        <div class="note">
-          <p>
-            The system will typically read the [=report descriptor=] [=byte
-            sequence=] for each [=HID interface=] when a device is first
-            connected and cache the values in the system registry. If the
-            [=report descriptor=] is not available but the system provides
-            information that can be used to reconstruct the layout of each
-            report, the user agent may use an alternate algorithm instead of
-            parsing the [=report descriptor=].
-          </p>
-          <p>
-            The [=report descriptor=] format is described in
-            [[USBIF-HID-CLASS]] section 6.2.2. The algorithm below is intended
-            to implement the same parsing algorithm described in that section.
-          </p>
-          <p>
-            The [=report descriptor=] contains three classes of items.
-            <dfn>Main items</dfn> are used to define and group data fields.
-            <dfn>Global items</dfn> and <dfn>Local items</dfn> describe the
-            data fields. [=Local items=] define characteristics that only apply
-            to the next [=Main item=], while [=Global items=] define
-            characteristics that affect all subsequently defined [=Main
-            items=].
-          </p>
-          <p>
-            Each item has a <dfn>item data field</dfn> containing 0, 1, 2, or 4
-            bytes of data associated with the item and a <dfn>bSize field</dfn>
-            that describes how many bytes are used to store the [=item data
-            field=]. Each item also has a tag that identifies its type.
-          </p>
+      <div class="note">
+        <p>
+          The system will typically read the [=report descriptor=] [=byte
+          sequence=] for each [=HID interface=] when a device is first
+          connected and cache the values in the system registry. If the
+          [=report descriptor=] is not available but the system provides
+          information that can be used to reconstruct the layout of each
+          report, the user agent may use an alternate algorithm instead of
+          parsing the [=report descriptor=].
+        </p>
+        <p>
+          The [=report descriptor=] format is described in
+          [[USBIF-HID-CLASS]] section 6.2.2. The algorithm below is intended
+          to implement the same parsing algorithm described in that section.
+        </p>
+        <p>
+          The [=report descriptor=] contains three classes of items.
+          <dfn>Main items</dfn> are used to define and group data fields.
+          <dfn>Global items</dfn> and <dfn>Local items</dfn> describe the
+          data fields. [=Local items=] define characteristics that only apply
+          to the next [=Main item=], while [=Global items=] define
+          characteristics that affect all subsequently defined [=Main
+          items=].
+        </p>
+        <p>
+          Each item has a <dfn>item data field</dfn> containing 0, 1, 2, or 4
+          bytes of data associated with the item and a <dfn>bSize field</dfn>
+          that describes how many bytes are used to store the [=item data
+          field=]. Each item also has a tag that identifies its type.
+        </p>
         </div>
+      <ol>
         <li>Let |items| be the result of converting the [=report descriptor=]
         [=byte sequence=] into a [=list=] of [=Main items=], [=Global items=],
         and [=Local items=].
