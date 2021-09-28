@@ -43,4 +43,7 @@
 
   // Block Jabra access to certain proprietary functionality. 
   { vendor:0x0b0e, usagePage:0xff00, reportId:0x05, reportType:"output" },
+  
+  // Block all OnlyKey access
+  { vendor:0x1d50, product:0x60fc },
 ]
