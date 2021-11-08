@@ -962,7 +962,8 @@
               [=this=].{{HID/[[devices]]}}:
                 <ol>
                   <li>If the user has allowed the site to access |device| as
-                  the result of a previous call to {{HID/requestDevice()}},
+                  the result of a previous call to {{HID/requestDevice()}} and
+                  |device|.{{HIDDevice/[[state]]}} is not `"forgotten"`,
                   then [=list/append=] |device| to |devices|.
                   </li>
                 </ol>
@@ -1277,6 +1278,7 @@
             readonly attribute FrozenArray&lt;HIDCollectionInfo&gt; collections;
             Promise&lt;undefined&gt; open();
             Promise&lt;undefined&gt; close();
+            Promise&lt;undefined&gt; forget();
             Promise&lt;undefined&gt; sendReport([EnforceRange] octet reportId, BufferSource data);
             Promise&lt;undefined&gt; sendFeatureReport(
                 [EnforceRange] octet reportId,
@@ -1590,6 +1592,10 @@
         <ol>
           <li>Let |promise:Promise| be [=a new promise=].
           </li>
+          <li>If [=this=].{{HIDDevice/[[state]]}} is either `"forgotten"` or
+          `"forgetting"`, then [=reject=] |promise| with a
+          "{{InvalidStateError}}" {{DOMException}} and return |promise|.
+          </li>
           <li>Set [=this=].{{HIDDevice/[[state]]}} to `"closing"`.
           </li>
           <li>[=list/For each=] |pendingPromise:Promise| of
@@ -1631,6 +1637,43 @@
               release any associated resources.
               </li>
               <li>Set [=this=].{{HIDDevice/[[state]]}} to `"closed"`.
+              </li>
+              <li>[=Queue a global task=] on the [=relevant global object=] of
+              [=this=] using the [=HID device task source=] to [=resolve=]
+              |promise| with `undefined`.
+              </li>
+            </ol>
+          </li>
+          <li>Return |promise|.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>
+          <dfn>forget()</dfn> method
+        </h3>
+        <div class="note">
+          <p>
+            The user agent MAY decide to combine permissions across APIs, for
+            instance tracking WebHID + WebUSB device access under a unified
+            low-level device access permission. This is why this method may
+            also revoke additional (unspecified yet) permissions in the future.
+          </p>
+        </div>
+        <p>
+          The {{HIDDevice/forget()}} method steps are:
+        </p>
+        <ol>
+          <li>Let |promise:Promise| be [=a new promise=].
+          </li>
+          <li>Set [=this=].{{HIDDevice/[[state]]}} to `"forgetting"`.
+          </li>
+          <li>Perform the following steps [=in parallel=]:
+            <ol>
+              <li>Invoke the user agent to revoke access to all the [=HID interfaces=]
+              exposed by the HID device.
+              </li>
+              <li>Set [=this=].{{HIDDevice/[[state]]}} to `"forgotten"`.
               </li>
               <li>[=Queue a global task=] on the [=relevant global object=] of
               [=this=] using the [=HID device task source=] to [=resolve=]
