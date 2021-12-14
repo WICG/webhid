@@ -1678,6 +1678,39 @@
                   </li>
                   <li>Set |device|.{{HIDDevice/[[state]]}} to `"forgetting"`.
                   </li>
+                  <li>[=list/For each=] |pendingPromise:Promise| of
+                    |device|.{{HIDDevice/[[pendingSendReportPromises]]}}:
+                      <ol>
+                        <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
+                        {{DOMException}}.
+                        </li>
+                      </ol>
+                    </li>
+                    <li>[=list/Empty=]
+                    |device|.{{HIDDevice/[[pendingSendReportPromises]]}}.
+                    </li>
+                    <li>[=list/For each=] |pendingPromise:Promise| of
+                      |device|.{{HIDDevice/[[pendingSendFeatureReportPromises]]}}:
+                      <ol>
+                        <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
+                        {{DOMException}}.
+                        </li>
+                      </ol>
+                    </li>
+                    <li>[=list/Empty=]
+                    |device|.{{HIDDevice/[[pendingSendFeatureReportPromises]]}}.
+                    </li>
+                    <li>[=list/For each=] |pendingPromise:Promise| of
+                    |device|.{{HIDDevice/[[pendingReceiveFeatureReportPromises]]}}:
+                      <ol>
+                        <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
+                        {{DOMException}}.
+                        </li>
+                      </ol>
+                    </li>
+                    <li>[=list/Empty=]
+                    |device|.{{HIDDevice/[[pendingReceiveFeatureReportPromises]]}}.
+                    </li>
                   <li>Invoke the user agent to revoke access to all the [=HID interfaces=]
                   exposed by |device|.
                   </li>
@@ -1685,11 +1718,11 @@
                   </li>
                 </ol>
               </li>
+              <li>[=Queue a global task=] on the [=relevant global object=] of
+              [=this=] using the [=HID device task source=] to [=resolve=]
+              |promise| with `undefined`.
+              </li>
             </ol>
-            <li>[=Queue a global task=] on the [=relevant global object=] of
-            [=this=] using the [=HID device task source=] to [=resolve=]
-            |promise| with `undefined`.
-            </li>
           </li>
           <li>Return |promise|.
           </li>
