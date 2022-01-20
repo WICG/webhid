@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en" dir="ltr"><head>
 <meta charset="utf-8">
-<meta name="generator" content="ReSpec 28.1.0">
+<meta name="generator" content="ReSpec 28.2.2">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style>
 span.example-title{text-transform:none}
@@ -83,7 +83,6 @@ dfn{cursor:pointer}
 25%{transform:scale(1.25,1.25);opacity:.75}
 100%{transform:scale(1,1)}
 }
-.hljs{background:0 0!important}
 :is(h1,h2,h3,h4,h5,h6,a) abbr{border:none}
 dfn{font-weight:700}
 a.internalDFN{color:inherit;border-bottom:1px solid #99c;text-decoration:none}
@@ -161,6 +160,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
 </style>
 <script id="initialUserConfig" type="application/json">{
   "specStatus": "CG-DRAFT",
+  "latestVersion": null,
   "editors": [
     {
       "name": "Matt Reynolds",
@@ -206,8 +206,8 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       "id": "usbif-hid-usage"
     }
   },
-  "publishISODate": "2022-01-07T00:00:00.000Z",
-  "generatedSubtitle": "Draft Community Group Report 07 January 2022"
+  "publishISODate": "2022-01-20T00:00:00.000Z",
+  "generatedSubtitle": "Draft Community Group Report 20 January 2022"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/cg-draft"></head>
   <body class="h-entry" data-cite="WEBIDL DOM HTML INFRA PERMISSIONS-POLICY POINTEREVENTS UIEVENTS GAMEPAD"><div class="head">
@@ -215,13 +215,11 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     
     <h2>
       Draft Community Group Report
-      <time class="dt-published" datetime="2022-01-07">07 January 2022</time>
+      <time class="dt-published" datetime="2022-01-20">20 January 2022</time>
     </h2>
     <dl>
       
-      <dt>Latest published version:</dt><dd>
-              <a href="https://www.w3.org/TR/webhid/">https://www.w3.org/TR/webhid/</a>
-            </dd>
+      
       <dt>Latest editor's draft:</dt><dd><a href="https://wicg.github.io/webhid/">https://wicg.github.io/webhid/</a></dd>
       
       
@@ -2793,48 +2791,48 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidinputreportev
 };</span></code></pre>
       <dl>
         <dt>
-          <dfn id="dfn-none" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn"><code>"none"</code></dfn>
+          <dfn id="dfn-none" tabindex="0" aria-haspopup="dialog" class="respec-offending-element" title="Found definition for &quot;&quot;none&quot;&quot;, but nothing links to it. This is usually a spec bug!" data-dfn-type="dfn"><code>"none"</code></dfn>
         </dt>
         <dd>
           No unit system. Indicates that the item does not have a unit
           definition.
         </dd>
         <dt>
-          <dfn id="dfn-si-linear" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn"><code>"si-linear"</code></dfn>
+          <dfn id="dfn-si-linear" tabindex="0" aria-haspopup="dialog" class="respec-offending-element" title="Found definition for &quot;&quot;si-linear&quot;&quot;, but nothing links to it. This is usually a spec bug!" data-dfn-type="dfn"><code>"si-linear"</code></dfn>
         </dt>
         <dd>
           The SI Linear unit system uses centimeter, gram, second, Kelvin,
           Ampere, Candela.
         </dd>
         <dt>
-          <dfn id="dfn-si-rotation" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn"><code>"si-rotation"</code></dfn>
+          <dfn id="dfn-si-rotation" tabindex="0" aria-haspopup="dialog" class="respec-offending-element" title="Found definition for &quot;&quot;si-rotation&quot;&quot;, but nothing links to it. This is usually a spec bug!" data-dfn-type="dfn"><code>"si-rotation"</code></dfn>
         </dt>
         <dd>
           The SI Rotation unit system uses radian, gram, second, Kelvin,
           Ampere, Candela.
         </dd>
         <dt>
-          <dfn id="dfn-english-linear" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn"><code>"english-linear"</code></dfn>
+          <dfn id="dfn-english-linear" tabindex="0" aria-haspopup="dialog" class="respec-offending-element" title="Found definition for &quot;&quot;english-linear&quot;&quot;, but nothing links to it. This is usually a spec bug!" data-dfn-type="dfn"><code>"english-linear"</code></dfn>
         </dt>
         <dd>
           The English Linear unit system uses inch, slug, second, degree
           Fahrenheit, Ampere, Candela.
         </dd>
         <dt>
-          <dfn id="dfn-english-rotation" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn"><code>"english-rotation"</code></dfn>
+          <dfn id="dfn-english-rotation" tabindex="0" aria-haspopup="dialog" class="respec-offending-element" title="Found definition for &quot;&quot;english-rotation&quot;&quot;, but nothing links to it. This is usually a spec bug!" data-dfn-type="dfn"><code>"english-rotation"</code></dfn>
         </dt>
         <dd>
           The English Rotation unit system uses degree, slug, second, degree
           Fahrenheit, Ampere, Candela.
         </dd>
         <dt>
-          <dfn id="dfn-vendor-defined" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn"><code>"vendor-defined"</code></dfn>
+          <dfn id="dfn-vendor-defined" tabindex="0" aria-haspopup="dialog" class="respec-offending-element" title="Found definition for &quot;&quot;vendor-defined&quot;&quot;, but nothing links to it. This is usually a spec bug!" data-dfn-type="dfn"><code>"vendor-defined"</code></dfn>
         </dt>
         <dd>
           A vendor-defined unit system.
         </dd>
         <dt>
-          <dfn id="dfn-reserved" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn"><code>"reserved"</code></dfn>
+          <dfn id="dfn-reserved" tabindex="0" aria-haspopup="dialog" class="respec-offending-element" title="Found definition for &quot;&quot;reserved&quot;&quot;, but nothing links to it. This is usually a spec bug!" data-dfn-type="dfn"><code>"reserved"</code></dfn>
         </dt>
         <dd>
           Indicates that the device used a reserved value for its unit system.
