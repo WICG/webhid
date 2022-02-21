@@ -93,6 +93,7 @@ interface HIDInputReportEvent : Event {
 
 dictionary HIDDeviceRequestOptions {
     required sequence<HIDDeviceFilter> filters;
+    sequence<HIDDeviceExclude> excludes = [];
 };
 
 dictionary HIDDeviceFilter {
@@ -100,6 +101,11 @@ dictionary HIDDeviceFilter {
     unsigned short productId;
     unsigned short usagePage;
     unsigned short usage;
+};
+
+dictionary HIDDeviceExclude {
+    unsigned long vendorId;
+    unsigned short productId;
 };
 ```
 
