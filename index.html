@@ -1029,6 +1029,28 @@
               </li>
             </ol>
           </li>
+          <li>If |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"] is
+          present, then run the following steps [=list/for each=]
+          |exclusionFilter:HIDDeviceFilter| of
+          |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"]:
+            <ol>
+              <li>If |exclusionFilter| is empty, then [=reject=] |promise| with
+              a {{TypeError}} and return |promise|.
+              </li>
+              <li>If |exclusionFilter|["{{HIDDeviceFilter/productId}}"] is
+              present and |exclusionFilter|["{{HIDDeviceFilter/vendorId}}"] is
+              not present, [=reject=] |promise| with a {{TypeError}} and return
+              |promise|.
+              </li>
+              <li>If |exclusionFilter|["{{HIDDeviceFilter/usage}}"] is present,
+              [=reject=] |promise| with a {{TypeError}} and return |promise|.
+              </li>
+              <li>If |exclusionFilter|["{{HIDDeviceFilter/usagePage}}"] is
+              present, [=reject=] |promise| with a {{TypeError}} and return
+              |promise|.
+              </li>
+            </ol>
+          </li>
           <li>Run the following steps [=in parallel=]:
             <ol>
               <li>Initialize |availableDevices| to be an empty [=list=].
@@ -1039,8 +1061,8 @@
                   <li>If |device| [=matches any filter=] in
                   |options|["{{HIDDeviceRequestOptions/filters}}"] and [=is not
                   excluded=] in
-                  |options|["{{HIDDeviceRequestOptions/excludes}}"], then
-                  [=list/append=] |device| to |availableDevices|.
+                  |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"],
+                  then [=list/append=] |device| to |availableDevices|.
                   </li>
                 </ol>
               </li>
@@ -1090,7 +1112,7 @@
           <pre class="idl">
             dictionary HIDDeviceRequestOptions {
                 required sequence&lt;HIDDeviceFilter&gt; filters;
-                sequence&lt;HIDDeviceExclude&gt; excludes = [];
+                sequence&lt;HIDDeviceFilter&gt; exclusionFilters = [];
             };
           </pre>
           <dl>
@@ -1101,10 +1123,10 @@
               Filters for HID devices.
             </dd>
             <dt>
-              <dfn>excludes</dfn> member
+              <dfn>exclusionFilters</dfn> member
             </dt>
             <dd>
-              Excludes HID devices.
+              Exclusion filters for HID devices.
             </dd>
           </dl>
         </section>
@@ -1151,12 +1173,12 @@
           </dl>
           <div class="note">
             <p>
-              Device filters are used to narrow the list of devices presented
-              to the user in the chooser dialog created by
-              {{HID/requestDevice()}}. When no filters are provided, all
-              connected devices that don't match any excludes are included. When
-              one or more filters are provided, a device is included if any
-              filter matches and it doesn't match any excludes.
+              Device filters are used to narrow the list of devices presented to
+              the user in the chooser dialog created by {{HID/requestDevice()}}.
+              When no filters are provided, all connected devices matching no
+              exclusion filters are included. When one or more filters are
+              provided, a device is included if any filter matches and no
+              exclusion filters matches.
             </p>
             <p>
               All {{HIDDeviceFilter}} members are optional. Each member
@@ -1193,6 +1215,13 @@
               Device ID rules and usage rules may be combined. For instance, an
               application may want to match devices from a particular vendor,
               but only devices that implement a specific device class.
+            </p>
+            <p>
+              The {{HIDDeviceRequestOptions/exclusionFilters}} option allows an
+              application to exclude some devices presented to the user from the
+              chooser dialog created by {{HID/requestDevice()}} that are known
+              to not work as expected, even though they implement a specific
+              device class for instance.
             </p>
           </div>
           <p>
@@ -1272,55 +1301,22 @@
             <li>Return `true`.
             </li>
           </ol>
-        </section>
-        <section data-dfn-for="HIDDeviceExclude">
-          <h4>
-            <dfn>HIDDeviceExclude</dfn> dictionary
-          </h4>
-          <pre class="idl">
-            dictionary HIDDeviceExclude {
-                unsigned long vendorId;
-                unsigned short productId;
-            };
-          </pre>
-          <dl>
-            <dt>
-              <dfn>vendorId</dfn> member
-            </dt>
-            <dd>
-              The [=vendor ID=] to match.
-            </dd>
-            <dt>
-              <dfn>productId</dfn> member
-            </dt>
-            <dd>
-              The [=product ID=] to match.
-            </dd>
-          </dl>
-          <div class="note">
-            <p>
-              The {{HIDDeviceRequestOptions/excludes}} option allows an
-              application to exclude some devices presented to the user from the
-              chooser dialog created by {{HID/requestDevice()}} that are known
-              to not work as expected, even though they implement a specific
-              device class for instance.
-            </p>
-          </div>
           <p>
-            A {{HIDDevice}} |device:HIDDevice| <dfn>is not excluded</dfn> in
-            a [=sequence=] |excludes:sequence&lt;HIDDeviceExclude&gt;| of
-            {{HIDDeviceExclude}} if these steps return `true`:
+            A {{HIDDevice}} |device:HIDDevice| <dfn>is not excluded</dfn> in a
+            [=sequence=] |exclusionFilters:sequence&lt;HIDDeviceFilter&gt;| of
+            {{HIDDeviceFilter}} if these steps return `true`:
           </p>
           <ol>
-            <li>If |excludes| is empty, then return `true`.
+            <li>If |exclusionFilters| is empty, then return `true`.
             </li>
-            <li>[=list/For each=] |exclude:HIDDeviceExclude| of |excludes|:
+            <li>[=list/For each=] |exclusionFilter:HIDDeviceFilter| of
+            |exclusionFilters|:
               <ol>
-                <li>If |exclude|["{{HIDDeviceExclude/vendorId}}"] is equal to
-                  |device|.{{HIDDevice/vendorId}}, then return `false`.
+                <li>If |exclusionFilter|["{{HIDDeviceFilter/vendorId}}"] is
+                equal to |device|.{{HIDDevice/vendorId}}, then return `false`.
                 </li>
-                <li>If |exclude|["{{HIDDeviceExclude/productId}}"] is equal to
-                  |device|.{{HIDDevice/productId}}, then return `false`.
+                <li>If |exclusionFilter|["{{HIDDeviceFilter/productId}}"] is
+                equal to |device|.{{HIDDevice/productId}}, then return `false`.
                 </li>
               </ol>
             </li>
@@ -2734,8 +2730,9 @@
                     usage: 0x0001,
                   },
                 ],
-                excludes: [
+                exclusionFilters: [
                   {
+                    vendorId: 0xabcd,
                     productId: 0x1234,
                   }
                 ],
