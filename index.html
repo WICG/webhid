@@ -1015,39 +1015,27 @@
           then run the following steps [=list/for each=]
           |filter:HIDDeviceFilter| of
           |options|["{{HIDDeviceRequestOptions/filters}}"]:
-            <ol>
-              <li>If |filter| is empty, then [=reject=] |promise| with a
-              {{TypeError}} and return |promise|.
-              </li>
-              <li>If |filter|["{{HIDDeviceFilter/productId}}"] is present and
-              |filter|["{{HIDDeviceFilter/vendorId}}"] is not present,
-              [=reject=] |promise| with a {{TypeError}} and return |promise|.
-              </li>
-              <li>If |filter|["{{HIDDeviceFilter/usage}}"] is present and
-              |filter|["{{HIDDeviceFilter/usagePage}}"] is not present,
-              [=reject=] |promise| with a {{TypeError}} and return |promise|.
-              </li>
-            </ol>
+          <ol>
+            <li>If |filter| is not [=a valid filter=], then [=reject=] |promise|
+            with a {{TypeError}} and return |promise|.
+            </li>
+          </ol>
           </li>
           <li>If |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"] is
-          present, then run the following steps [=list/for each=]
-          |exclusionFilter:HIDDeviceFilter| of
-          |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"]:
+          present, then run the following steps:
             <ol>
-              <li>If |exclusionFilter| is empty, then [=reject=] |promise| with
-              a {{TypeError}} and return |promise|.
-              </li>
-              <li>If |exclusionFilter|["{{HIDDeviceFilter/productId}}"] is
-              present and |exclusionFilter|["{{HIDDeviceFilter/vendorId}}"] is
-              not present, [=reject=] |promise| with a {{TypeError}} and return
+              <li>If |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"] is
+              empty, then [=reject=] |promise| with a {{TypeError}} and return
               |promise|.
               </li>
-              <li>If |exclusionFilter|["{{HIDDeviceFilter/usage}}"] is present,
-              [=reject=] |promise| with a {{TypeError}} and return |promise|.
-              </li>
-              <li>If |exclusionFilter|["{{HIDDeviceFilter/usagePage}}"] is
-              present, [=reject=] |promise| with a {{TypeError}} and return
-              |promise|.
+              <li>[=list/For each=] |exclusionFilter:HIDDeviceFilter| of
+              |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"]:
+                <ol>
+                  <li>If |exclusionFilter| is not [=a valid filter=], then
+                  [=reject=] |promise| with a {{TypeError}} and return
+                  |promise|.
+                  </li>
+                </ol>
               </li>
             </ol>
           </li>
@@ -1059,8 +1047,8 @@
               [=this=].{{HID/[[devices]]}}:
                 <ol>
                   <li>If |device| [=matches any filter=] in
-                  |options|["{{HIDDeviceRequestOptions/filters}}"] and [=is not
-                  excluded=] in
+                  |options|["{{HIDDeviceRequestOptions/filters}}"] and |device|
+                  does not [=match any filter=] in
                   |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"],
                   then [=list/append=] |device| to |availableDevices|.
                   </li>
@@ -1112,7 +1100,7 @@
           <pre class="idl">
             dictionary HIDDeviceRequestOptions {
                 required sequence&lt;HIDDeviceFilter&gt; filters;
-                sequence&lt;HIDDeviceFilter&gt; exclusionFilters = [];
+                sequence&lt;HIDDeviceFilter&gt; exclusionFilters;
             };
           </pre>
           <dl>
@@ -1225,9 +1213,28 @@
             </p>
           </div>
           <p>
-            A {{HIDDevice}} |device:HIDDevice| <dfn>matches any filter</dfn> in
-            a [=sequence=] |filters:sequence&lt;HIDDeviceFilter&gt;| of
-            {{HIDDeviceFilter}} if these steps return `true`:
+            A {{HIDDeviceFilter}} |filter:HIDDeviceFilter| is <dfn>a valid
+            filter</dfn> if these steps return `true`:
+          </p>
+          <ol>
+            <li>If |filter| is empty, then return `false`.
+            </li>
+            <li>If |filter|["{{HIDDeviceFilter/productId}}"] is present and
+            |filter|["{{HIDDeviceFilter/vendorId}}"] is not present, then return
+            `false`.
+            </li>
+            <li>If |filter|["{{HIDDeviceFilter/usage}}"] is present and
+            |filter|["{{HIDDeviceFilter/usagePage}}"] is not present, then
+            return `false`.
+            </li>
+            <li>Return `true`.
+            </li>
+          </ol>
+          <p>
+            A {{HIDDevice}} |device:HIDDevice| <dfn data-lt="match any
+            filter">matches any filter</dfn> in a [=sequence=]
+            |filters:sequence&lt;HIDDeviceFilter&gt;| of {{HIDDeviceFilter}} if
+            these steps return `true`:
           </p>
           <ol>
             <li>If |filters| is empty, then return `true`.
@@ -1295,28 +1302,6 @@
                 <li>If "{{HIDCollectionInfo/usage}}" is in |filter| and
                 |filter|["{{HIDDeviceFilter/usage}}"] is not equal to
                 |collection|.{{HIDCollectionInfo/usage}}, then return `false`.
-                </li>
-              </ol>
-            </li>
-            <li>Return `true`.
-            </li>
-          </ol>
-          <p>
-            A {{HIDDevice}} |device:HIDDevice| <dfn>is not excluded</dfn> in a
-            [=sequence=] |exclusionFilters:sequence&lt;HIDDeviceFilter&gt;| of
-            {{HIDDeviceFilter}} if these steps return `true`:
-          </p>
-          <ol>
-            <li>If |exclusionFilters| is empty, then return `true`.
-            </li>
-            <li>[=list/For each=] |exclusionFilter:HIDDeviceFilter| of
-            |exclusionFilters|:
-              <ol>
-                <li>If |exclusionFilter|["{{HIDDeviceFilter/vendorId}}"] is
-                equal to |device|.{{HIDDevice/vendorId}}, then return `false`.
-                </li>
-                <li>If |exclusionFilter|["{{HIDDeviceFilter/productId}}"] is
-                equal to |device|.{{HIDDevice/productId}}, then return `false`.
                 </li>
               </ol>
             </li>
