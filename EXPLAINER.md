@@ -93,6 +93,7 @@ interface HIDInputReportEvent : Event {
 
 dictionary HIDDeviceRequestOptions {
     required sequence<HIDDeviceFilter> filters;
+    sequence<HIDDeviceFilter> exclusionFilters;
 };
 
 dictionary HIDDeviceFilter {

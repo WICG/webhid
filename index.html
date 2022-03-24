@@ -1015,17 +1015,27 @@
           then run the following steps [=list/for each=]
           |filter:HIDDeviceFilter| of
           |options|["{{HIDDeviceRequestOptions/filters}}"]:
+          <ol>
+            <li>If |filter| is not [=a valid filter=], then [=reject=] |promise|
+            with a {{TypeError}} and return |promise|.
+            </li>
+          </ol>
+          </li>
+          <li>If |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"] is
+          present, then run the following steps:
             <ol>
-              <li>If |filter| is empty, then [=reject=] |promise| with a
-              {{TypeError}} and return |promise|.
+              <li>If |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"] is
+              empty, then [=reject=] |promise| with a {{TypeError}} and return
+              |promise|.
               </li>
-              <li>If |filter|["{{HIDDeviceFilter/productId}}"] is present and
-              |filter|["{{HIDDeviceFilter/vendorId}}"] is not present,
-              [=reject=] |promise| with a {{TypeError}} and return |promise|.
-              </li>
-              <li>If |filter|["{{HIDDeviceFilter/usage}}"] is present and
-              |filter|["{{HIDDeviceFilter/usagePage}}"] is not present,
-              [=reject=] |promise| with a {{TypeError}} and return |promise|.
+              <li>[=list/For each=] |exclusionFilter:HIDDeviceFilter| of
+              |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"]:
+                <ol>
+                  <li>If |exclusionFilter| is not [=a valid filter=], then
+                  [=reject=] |promise| with a {{TypeError}} and return
+                  |promise|.
+                  </li>
+                </ol>
               </li>
             </ol>
           </li>
@@ -1037,8 +1047,10 @@
               [=this=].{{HID/[[devices]]}}:
                 <ol>
                   <li>If |device| [=matches any filter=] in
-                  |options|["{{HIDDeviceRequestOptions/filters}}"], then
-                  [=list/append=] |device| to |availableDevices|.
+                  |options|["{{HIDDeviceRequestOptions/filters}}"] and |device|
+                  does not [=match any filter=] in
+                  |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"],
+                  then [=list/append=] |device| to |availableDevices|.
                   </li>
                 </ol>
               </li>
@@ -1088,6 +1100,7 @@
           <pre class="idl">
             dictionary HIDDeviceRequestOptions {
                 required sequence&lt;HIDDeviceFilter&gt; filters;
+                sequence&lt;HIDDeviceFilter&gt; exclusionFilters;
             };
           </pre>
           <dl>
@@ -1096,6 +1109,12 @@
             </dt>
             <dd>
               Filters for HID devices.
+            </dd>
+            <dt>
+              <dfn>exclusionFilters</dfn> member
+            </dt>
+            <dd>
+              Exclusion filters for HID devices.
             </dd>
           </dl>
         </section>
@@ -1142,11 +1161,12 @@
           </dl>
           <div class="note">
             <p>
-              Device filters are used to narrow the list of devices presented
-              to the user in the chooser dialog created by
-              {{HID/requestDevice()}}. When no filters are provided, all
-              connected devices are included. When one or more filters are
-              provided, a device is included if any filter matches.
+              Device filters are used to narrow the list of devices presented to
+              the user in the chooser dialog created by {{HID/requestDevice()}}.
+              When no filters are provided, all connected devices matching no
+              exclusion filters are included. When one or more filters are
+              provided, a device is included if any filter matches and no
+              exclusion filters matches.
             </p>
             <p>
               All {{HIDDeviceFilter}} members are optional. Each member
@@ -1184,11 +1204,37 @@
               application may want to match devices from a particular vendor,
               but only devices that implement a specific device class.
             </p>
+            <p>
+              The {{HIDDeviceRequestOptions/exclusionFilters}} option allows an
+              application to exclude some devices presented to the user from the
+              chooser dialog created by {{HID/requestDevice()}} that are known
+              to not work as expected, even though they implement a specific
+              device class for instance.
+            </p>
           </div>
           <p>
-            A {{HIDDevice}} |device:HIDDevice| <dfn>matches any filter</dfn> in
-            a [=sequence=] |filters:sequence&lt;HIDDeviceFilter&gt;| of
-            {{HIDDeviceFilter}} if these steps return `true`:
+            A {{HIDDeviceFilter}} |filter:HIDDeviceFilter| is <dfn>a valid
+            filter</dfn> if these steps return `true`:
+          </p>
+          <ol>
+            <li>If |filter| is empty, then return `false`.
+            </li>
+            <li>If |filter|["{{HIDDeviceFilter/productId}}"] is present and
+            |filter|["{{HIDDeviceFilter/vendorId}}"] is not present, then return
+            `false`.
+            </li>
+            <li>If |filter|["{{HIDDeviceFilter/usage}}"] is present and
+            |filter|["{{HIDDeviceFilter/usagePage}}"] is not present, then
+            return `false`.
+            </li>
+            <li>Return `true`.
+            </li>
+          </ol>
+          <p>
+            A {{HIDDevice}} |device:HIDDevice| <dfn data-lt="match any
+            filter">matches any filter</dfn> in a [=sequence=]
+            |filters:sequence&lt;HIDDeviceFilter&gt;| of {{HIDDeviceFilter}} if
+            these steps return `true`:
           </p>
           <ol>
             <li>If |filters| is empty, then return `true`.
@@ -2651,9 +2697,10 @@
           generate connection events until permission has been granted to
           access the device. The page may request permission using
           {{HID/requestDevice()}}. In this example, the page requests access to
-          a device with [=vendor ID=] `0xABCD`, [=product ID=] `0x1234`. The
-          device must also have a collection with [=usage page=] Consumer
-          (`0x000C`) and [=usage ID=] Consumer Control (`0x0001`).
+          a device with [=vendor ID=] `0xABCD`. The device must also have a
+          collection with [=usage page=] Consumer (`0x000C`) and [=usage ID=]
+          Consumer Control (`0x0001`). The device with [=product ID=] `0x1234`
+          has been reported as malfunctioning.
         </p>
         <pre class="js">
           let requestButton = document.getElementById("request-hid-device");
@@ -2664,10 +2711,15 @@
                 filters: [
                   {
                     vendorId: 0xabcd,
-                    productId: 0x1234,
                     usagePage: 0x000c,
                     usage: 0x0001,
                   },
+                ],
+                exclusionFilters: [
+                  {
+                    vendorId: 0xabcd,
+                    productId: 0x1234,
+                  }
                 ],
               });
               device = devices[0];
