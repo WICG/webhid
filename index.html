@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en" dir="ltr"><head>
 <meta charset="utf-8">
-<meta name="generator" content="ReSpec 28.2.2">
+<meta name="generator" content="ReSpec 32.1.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style>
 span.example-title{text-transform:none}
@@ -122,14 +122,16 @@ details.respec-tests-details[open]{z-index:999999;position:absolute;border:thin 
 details.respec-tests-details[open]>summary{border-bottom:thin solid #cad3e2;padding-left:1em;margin-bottom:1em;line-height:2em}
 details.respec-tests-details>ul{width:100%;margin-top:-.3em}
 details.respec-tests-details>li{padding-left:1em}
-a[href].self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
-h2,h3,h4,h5,h6{position:relative}
+.self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
 aside.example .marker>a.self-link{color:inherit}
-:is(h2,h3,h4,h5,h6)>a.self-link{border:none;color:inherit;font-size:83%;height:2em;left:-1.6em;opacity:.5;position:absolute;text-align:center;text-decoration:none;top:0;transition:opacity .2s;width:2em}
-:is(h2,h3,h4,h5,h6)>a.self-link::before{content:"§";display:block}
+.header-wrapper{display:flex;align-items:baseline}
+:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(#toch2)+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.5}
+:is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§";text-decoration:none;color:var(--heading-text)}
+:is(h2,h3)+a.self-link{top:-.2em}
+:is(h4,h5,h6)+a.self-link::before{color:#000}
 @media (max-width:767px){
 dd{margin-left:0}
-:is(h2,h3,h4,h5,h6)>a.self-link{left:auto;top:auto}
 }
 @media print{
 .removeOnSave{display:none}
@@ -206,32 +208,38 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       "id": "usbif-hid-usage"
     }
   },
-  "publishISODate": "2022-01-20T00:00:00.000Z",
-  "generatedSubtitle": "Draft Community Group Report 20 January 2022"
+  "publishISODate": "2022-03-24T00:00:00.000Z",
+  "generatedSubtitle": "Draft Community Group Report 24 March 2022"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/cg-draft"></head>
   <body class="h-entry" data-cite="WEBIDL DOM HTML INFRA PERMISSIONS-POLICY POINTEREVENTS UIEVENTS GAMEPAD"><div class="head">
-     <h1 id="title" class="title">WebHID API</h1>
     
-    <h2>
-      Draft Community Group Report
-      <time class="dt-published" datetime="2022-01-20">20 January 2022</time>
-    </h2>
+    <h1 id="title" class="title">WebHID API</h1> 
+    <p id="w3c-state">
+      <a href="https://www.w3.org/standards/types#reports">Draft Community Group Report</a>
+      <time class="dt-published" datetime="2022-03-24">24 March 2022</time>
+    </p>
     <dl>
       
-      
+      <dt>Latest published version:</dt><dd>
+              none
+            </dd>
       <dt>Latest editor's draft:</dt><dd><a href="https://wicg.github.io/webhid/">https://wicg.github.io/webhid/</a></dd>
       
       
       
       
-      <dt>Editor:</dt>
-      <dd class="editor p-author h-card vcard" data-editor-id="105511">
+      <dt>Editor:</dt><dd class="editor p-author h-card vcard" data-editor-id="105511">
     <span class="p-name fn">Matt Reynolds</span> (<a class="p-org org h-org" href="https://www.google.com/">Google</a>)
   </dd>
       
       
-      
+      <dt>Feedback:</dt><dd>
+        <a href="https://github.com/WICG/webhid/">GitHub WICG/webhid</a>
+        (<a href="https://github.com/WICG/webhid/pulls/">pull requests</a>,
+        <a href="https://github.com/WICG/webhid/issues/new/choose">new issue</a>,
+        <a href="https://github.com/WICG/webhid/issues/">open issues</a>)
+      </dd>
     </dl>
     
     <p class="copyright">
@@ -249,13 +257,13 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         </p>
     <hr title="Separator for header">
   </div>
-    <section id="abstract" class="introductory"><h2 id="abstract-0">Abstract<a class="self-link" href="#abstract" aria-label="Permalink for Section"></a></h2>
+    <section id="abstract" class="introductory"><h2>Abstract</h2>
       <p>
         This document describes an API for providing access to devices that
         support the Human Interface Device (HID) protocol.
       </p>
     </section>
-    <section id="sotd" class="introductory"><h2 id="status-of-this-document">Status of This Document<a class="self-link" href="#sotd" aria-label="Permalink for Section"></a></h2><p>
+    <section id="sotd" class="introductory"><h2>Status of This Document</h2><p>
       This specification was published by the
       <a href="https://www.w3.org/groups/cg/wicg">Web Platform Incubator Community Group</a>. It is not a W3C Standard nor is it
       on the W3C Standards Track.
@@ -293,7 +301,9 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
           Mitigation
         </a></li></ol></li><li class="tocline"><a class="tocxref" href="#extensions-to-the-navigator-interface"><bdi class="secno">4. </bdi>
         Extensions to the <code>Navigator</code> interface
-      </a></li><li class="tocline"><a class="tocxref" href="#hid-interface"><bdi class="secno">5. </bdi>
+      </a><ol class="toc"><li class="tocline"><a class="tocxref" href="#hid-attribute"><bdi class="secno">4.1 </bdi>
+        <span data-export="" data-dfn-type="attribute" data-idl="attribute" data-title="hid" data-dfn-for="Navigator" data-type="HID" data-lt="hid" data-local-lt="Navigator.hid"><code>hid</code></span> attribute
+      </a></li></ol></li><li class="tocline"><a class="tocxref" href="#hid-interface"><bdi class="secno">5. </bdi>
         <code>HID</code> interface
       </a><ol class="toc"><li class="tocline"><a class="tocxref" href="#getdevices-method"><bdi class="secno">5.1 </bdi>
           <span data-export="" data-dfn-type="method" data-idl="operation" data-title="getDevices()" data-dfn-for="HID" data-type="Promise" data-lt="getDevices()" data-local-lt="HID.getDevices|HID.getDevices()|getDevices"><code>getDevices()</code></span> method
@@ -344,10 +354,10 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         </a></li></ol></li><li class="tocline"><a class="tocxref" href="#conformance"><bdi class="secno">16. </bdi>Conformance</a></li><li class="tocline"><a class="tocxref" href="#acknowledgements"><bdi class="secno">A. </bdi>
         Acknowledgements
       </a></li><li class="tocline"><a class="tocxref" href="#references"><bdi class="secno">B. </bdi>References</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#normative-references"><bdi class="secno">B.1 </bdi>Normative references</a></li><li class="tocline"><a class="tocxref" href="#informative-references"><bdi class="secno">B.2 </bdi>Informative references</a></li></ol></li></ol></nav>
-    <section class="informative" id="introduction">
-      <h2 id="x1-introduction"><bdi class="secno">1. </bdi>
+    <section class="informative" id="introduction"><div class="header-wrapper"><h2 id="x1-introduction"><bdi class="secno">1. </bdi>
         Introduction
-      <a class="self-link" href="#introduction" aria-label="Permalink for Section 1."></a></h2><p><em>This section is non-normative.</em></p>
+      </h2><a class="self-link" href="#introduction" aria-label="Permalink for Section 1."></a></div><p><em>This section is non-normative.</em></p>
+      
       <p>
         A HID (Human Interface Device) is a type of device that takes input
         from or provides output to humans. It also refers to the HID protocol,
@@ -369,14 +379,14 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         See also the related <a href="EXPLAINER.html">Explainer</a> document.
       </p>
     </section>
-    <section class="informative" id="motivating-applications">
-      <h2 id="x2-motivating-applications"><bdi class="secno">2. </bdi>
+    <section class="informative" id="motivating-applications"><div class="header-wrapper"><h2 id="x2-motivating-applications"><bdi class="secno">2. </bdi>
         Motivating Applications
-      <a class="self-link" href="#motivating-applications" aria-label="Permalink for Section 2."></a></h2><p><em>This section is non-normative.</em></p>
-      <section id="niche-devices">
-        <h3 id="x2-1-niche-devices"><bdi class="secno">2.1 </bdi>
+      </h2><a class="self-link" href="#motivating-applications" aria-label="Permalink for Section 2."></a></div><p><em>This section is non-normative.</em></p>
+      
+      <section id="niche-devices"><div class="header-wrapper"><h3 id="x2-1-niche-devices"><bdi class="secno">2.1 </bdi>
           Niche devices
-        <a class="self-link" href="#niche-devices" aria-label="Permalink for Section 2.1"></a></h3>
+        </h3><a class="self-link" href="#niche-devices" aria-label="Permalink for Section 2.1"></a></div>
+        
         <p>
           The most common classes of HID input devices are already
           well-supported on the web platform through existing high-level input
@@ -407,10 +417,10 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
           modification to the user agent.
         </p>
       </section>
-      <section id="prototyping-hobbyists-and-educational-devices">
-        <h3 id="x2-2-prototyping-hobbyists-and-educational-devices"><bdi class="secno">2.2 </bdi>
+      <section id="prototyping-hobbyists-and-educational-devices"><div class="header-wrapper"><h3 id="x2-2-prototyping-hobbyists-and-educational-devices"><bdi class="secno">2.2 </bdi>
           Prototyping, hobbyists, and educational devices
-        <a class="self-link" href="#prototyping-hobbyists-and-educational-devices" aria-label="Permalink for Section 2.2"></a></h3>
+        </h3><a class="self-link" href="#prototyping-hobbyists-and-educational-devices" aria-label="Permalink for Section 2.2"></a></div>
+        
         <p>
           HID is attractive for prototyping and hobbyist applications because
           it allows devices to use the host's generic HID driver instead of
@@ -424,14 +434,14 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         </p>
       </section>
     </section>
-    <section class="informative" id="security-and-privacy">
-      <h2 id="x3-security-and-privacy-considerations"><bdi class="secno">3. </bdi>
+    <section class="informative" id="security-and-privacy"><div class="header-wrapper"><h2 id="x3-security-and-privacy-considerations"><bdi class="secno">3. </bdi>
         Security and Privacy Considerations
-      <a class="self-link" href="#security-and-privacy" aria-label="Permalink for Section 3."></a></h2><p><em>This section is non-normative.</em></p>
-      <section id="abusing-access">
-        <h3 id="x3-1-abusing-access-to-a-device"><bdi class="secno">3.1 </bdi>
+      </h2><a class="self-link" href="#security-and-privacy" aria-label="Permalink for Section 3."></a></div><p><em>This section is non-normative.</em></p>
+      
+      <section id="abusing-access"><div class="header-wrapper"><h3 id="x3-1-abusing-access-to-a-device"><bdi class="secno">3.1 </bdi>
           Abusing Access to a Device
-        <a class="self-link" href="#abusing-access" aria-label="Permalink for Section 3.1"></a></h3>
+        </h3><a class="self-link" href="#abusing-access" aria-label="Permalink for Section 3.1"></a></div>
+        
         <p>
           HID peripherals may expose powerful functionality that should not be
           made accessible to the page without explicit consent from the user.
@@ -466,10 +476,10 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
           indicate the device is in use.
         </p>
       </section>
-      <section id="attacking-a-device">
-        <h3 id="x3-2-attacking-a-device"><bdi class="secno">3.2 </bdi>
+      <section id="attacking-a-device"><div class="header-wrapper"><h3 id="x3-2-attacking-a-device"><bdi class="secno">3.2 </bdi>
           Attacking a Device
-        <a class="self-link" href="#attacking-a-device" aria-label="Permalink for Section 3.2"></a></h3>
+        </h3><a class="self-link" href="#attacking-a-device" aria-label="Permalink for Section 3.2"></a></div>
+        
         <p>
           The HID protocol is extremely versatile, and a wide variety of
           devices have been designed that take advantage of this versatility.
@@ -493,10 +503,10 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
           mitigated at the API level.
         </p>
       </section>
-      <section id="attacking-the-host">
-        <h3 id="x3-3-attacking-the-host"><bdi class="secno">3.3 </bdi>
+      <section id="attacking-the-host"><div class="header-wrapper"><h3 id="x3-3-attacking-the-host"><bdi class="secno">3.3 </bdi>
           Attacking the Host
-        <a class="self-link" href="#attacking-the-host" aria-label="Permalink for Section 3.3"></a></h3>
+        </h3><a class="self-link" href="#attacking-the-host" aria-label="Permalink for Section 3.3"></a></div>
+        
         <p>
           If a malicious page gains access to a device, in some cases this
           access can be used to attack the host. A major concern is whether the
@@ -516,10 +526,10 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
           explicit consent.
         </p>
       </section>
-      <section id="mitigation">
-        <h3 id="x3-4-mitigation"><bdi class="secno">3.4 </bdi>
+      <section id="mitigation"><div class="header-wrapper"><h3 id="x3-4-mitigation"><bdi class="secno">3.4 </bdi>
           Mitigation
-        <a class="self-link" href="#mitigation" aria-label="Permalink for Section 3.4"></a></h3>
+        </h3><a class="self-link" href="#mitigation" aria-label="Permalink for Section 3.4"></a></div>
+        
         <p>
           To mitigate security and privacy risks, it is recommended that user
           agents implement a chooser-based flow for requesting device access.
@@ -534,26 +544,26 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         </p>
       </section>
     </section>
-    <section data-dfn-for="Navigator" id="extensions-to-the-navigator-interface">
-      <h2 id="x4-extensions-to-the-navigator-interface"><bdi class="secno">4. </bdi>
+    <section data-dfn-for="Navigator" id="extensions-to-the-navigator-interface"><div class="header-wrapper"><h2 id="x4-extensions-to-the-navigator-interface"><bdi class="secno">4. </bdi>
         Extensions to the <code>Navigator</code> interface
-      <a class="self-link" href="#extensions-to-the-navigator-interface" aria-label="Permalink for Section 4."></a></h2>
+      </h2><a class="self-link" href="#extensions-to-the-navigator-interface" aria-label="Permalink for Section 4."></a></div>
+      
       <pre class="idl def" id="webidl-135078422"><span class="idlHeader"><a class="self-link" href="#webidl-135078422">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-navigator-partial-1" data-title="Navigator">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>] partial interface <a data-idl="partial" data-link-type="interface" data-title="Navigator" class="idlID" data-dfn-for="Navigator" data-type="interface" href="https://html.spec.whatwg.org/multipage/system-state.html#navigator">Navigator</a> {<span data-idl="" class="idlAttribute" id="idl-def-navigator-hid" data-title="hid" data-dfn-for="Navigator">
     [<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject">SameObject</a></span>] readonly attribute<span class="idlType"> <a href="#dom-hid" class="internalDFN" data-link-type="idl" id="ref-for-dom-hid-1"><code>HID</code></a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-navigator-hid" id="ref-for-dom-navigator-hid-1"><code>hid</code></a>;</span>
 };</span></code></pre>
-      <h3 id="hid-attribute">
+      <section id="hid-attribute"><div class="header-wrapper"><h3 id="x4-1-hid-attribute"><bdi class="secno">4.1 </bdi>
         <dfn data-export="" data-dfn-type="attribute" id="dom-navigator-hid" data-idl="attribute" data-title="hid" data-dfn-for="Navigator" data-type="HID" data-lt="hid" data-local-lt="Navigator.hid" tabindex="0" aria-haspopup="dialog"><code>hid</code></dfn> attribute
-      <a class="self-link" href="#extensions-to-the-navigator-interface" aria-label="Permalink for Section"></a></h3>
+      </h3><a class="self-link" href="#hid-attribute" aria-label="Permalink for Section 4.1"></a></div>
       <p>
         When getting, the <a data-link-type="idl" href="#dom-navigator-hid" class="internalDFN" id="ref-for-dom-navigator-hid-2"><code>hid</code></a> attribute always returns the same
         instance of the <a data-link-type="idl" data-lt="HID" href="#dom-hid" class="internalDFN" id="ref-for-dom-hid-2"><code>HID</code></a> object.
       </p>
-    </section>
-    <section data-dfn-for="HID" id="hid-interface">
-      <h2 id="x5-hid-interface"><bdi class="secno">5. </bdi>
+    </section></section>
+    <section data-dfn-for="HID" id="hid-interface"><div class="header-wrapper"><h2 id="x5-hid-interface"><bdi class="secno">5. </bdi>
         <code>HID</code> interface
-      <a class="self-link" href="#hid-interface" aria-label="Permalink for Section 5."></a></h2>
-      <pre class="idl def" id="webidl-1274730005"><span class="idlHeader"><a class="self-link" href="#webidl-1274730005">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hid" data-title="HID">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=<a data-type="interface" href="https://html.spec.whatwg.org/multipage/window-object.html#window">Window</a></span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
+      </h2><a class="self-link" href="#hid-interface" aria-label="Permalink for Section 5."></a></div>
+      
+      <pre class="idl def" id="webidl-1274730005"><span class="idlHeader"><a class="self-link" href="#webidl-1274730005">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hid" data-title="HID">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=Window</span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
 interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="interface" data-title="HID" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HID</code></dfn> : <span class="idlSuperclass"><a data-type="interface" href="https://dom.spec.whatwg.org/#eventtarget">EventTarget</a></span> {<span data-idl="" class="idlAttribute" id="idl-def-hid-onconnect" data-title="onconnect" data-dfn-for="HID">
     attribute<span class="idlType"> <a data-type="typedef" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler">EventHandler</a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-hid-onconnect" id="ref-for-dom-hid-onconnect-1"><code>onconnect</code></a>;</span><span data-idl="" class="idlAttribute" id="idl-def-hid-ondisconnect" data-title="ondisconnect" data-dfn-for="HID">
     attribute<span class="idlType"> <a data-type="typedef" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler">EventHandler</a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-hid-ondisconnect" id="ref-for-dom-hid-ondisconnect-1"><code>ondisconnect</code></a>;</span><span data-idl="" class="idlMethod" id="idl-def-hid-getdevices" data-title="getDevices" data-dfn-for="HID"><span class="idlType">
@@ -1212,10 +1222,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
         attribute initialized to <var data-type="HIDDevice">device</var>.
         </li>
       </ol>
-      <section id="getdevices-method">
-        <h3 id="x5-1-getdevices-method"><bdi class="secno">5.1 </bdi>
+      <section id="getdevices-method"><div class="header-wrapper"><h3 id="x5-1-getdevices-method"><bdi class="secno">5.1 </bdi>
           <dfn data-export="" data-dfn-type="method" id="dom-hid-getdevices" data-idl="operation" data-title="getDevices()" data-dfn-for="HID" data-type="Promise" data-lt="getDevices()" data-local-lt="HID.getDevices|HID.getDevices()|getDevices" tabindex="0" aria-haspopup="dialog"><code>getDevices()</code></dfn> method
-        <a class="self-link" href="#getdevices-method" aria-label="Permalink for Section 5.1"></a></h3>
+        </h3><a class="self-link" href="#getdevices-method" aria-label="Permalink for Section 5.1"></a></div>
+        
         <p>
           The <a data-link-type="idl" data-lt="getDevices()" href="#dom-hid-getdevices" class="internalDFN" id="ref-for-dom-hid-getdevices-2"><code>getDevices</code></a><code>()</code> method steps are:
         </p>
@@ -1250,10 +1260,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
           </li>
         </ol>
       </section>
-      <section id="requestdevice-method">
-        <h3 id="x5-2-requestdevice-method"><bdi class="secno">5.2 </bdi>
+      <section id="requestdevice-method"><div class="header-wrapper"><h3 id="x5-2-requestdevice-method"><bdi class="secno">5.2 </bdi>
           <dfn data-export="" data-dfn-type="method" id="dom-hid-requestdevice" data-idl="operation" data-title="requestDevice()" data-dfn-for="HID" data-type="Promise" data-lt="requestDevice()|requestDevice(options)" data-local-lt="HID.requestDevice|HID.requestDevice()|requestDevice" tabindex="0" aria-haspopup="dialog"><code>requestDevice()</code></dfn> method
-        <a class="self-link" href="#requestdevice-method" aria-label="Permalink for Section 5.2"></a></h3>
+        </h3><a class="self-link" href="#requestdevice-method" aria-label="Permalink for Section 5.2"></a></div>
+        
         <div class="note" role="note" id="issue-container-generatedID-4"><div role="heading" class="note-title marker" id="h-note-4" aria-level="4"><span>Note</span></div><div class="">
           <p>
             The <a data-link-type="idl" data-lt="requestDevice()" href="#dom-hid-requestdevice" class="internalDFN" id="ref-for-dom-hid-requestdevice-5"><code>requestDevice</code></a><code>()</code> permission dialog presents a list of
@@ -1284,17 +1294,27 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
           then run the following steps <a data-link-type="dfn" data-type="dfn" href="https://infra.spec.whatwg.org/#list-iterate">for each</a>
           <var data-type="HIDDeviceFilter">filter</var> of
           <var>options</var>["<a data-link-type="idl" href="#dom-hiddevicerequestoptions-filters" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-filters-2"><code>filters</code></a>"]:
+          <ol>
+            <li>If <var data-type="HIDDeviceFilter">filter</var> is not <a data-link-type="dfn" href="#dfn-a-valid-filter" class="internalDFN" id="ref-for-dfn-a-valid-filter-1">a valid filter</a>, then <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#reject">reject</a> <var data-type="Promise">promise</var>
+            with a <a data-link-type="idl" data-lt="TypeError" data-type="exception" href="https://webidl.spec.whatwg.org/#exceptiondef-typeerror"><code>TypeError</code></a> and return <var data-type="Promise">promise</var>.
+            </li>
+          </ol>
+          </li>
+          <li>If <var>options</var>["<a data-link-type="idl" href="#dom-hiddevicerequestoptions-exclusionfilters" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-exclusionfilters-1"><code>exclusionFilters</code></a>"] is
+          present, then run the following steps:
             <ol>
-              <li>If <var data-type="HIDDeviceFilter">filter</var> is empty, then <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#reject">reject</a> <var data-type="Promise">promise</var> with a
-              <a data-link-type="idl" data-lt="TypeError" data-type="exception" href="https://webidl.spec.whatwg.org/#exceptiondef-typeerror"><code>TypeError</code></a> and return <var data-type="Promise">promise</var>.
+              <li>If <var>options</var>["<a data-link-type="idl" href="#dom-hiddevicerequestoptions-exclusionfilters" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-exclusionfilters-2"><code>exclusionFilters</code></a>"] is
+              empty, then <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#reject">reject</a> <var data-type="Promise">promise</var> with a <a data-link-type="idl" data-lt="TypeError" data-type="exception" href="https://webidl.spec.whatwg.org/#exceptiondef-typeerror"><code>TypeError</code></a> and return
+              <var data-type="Promise">promise</var>.
               </li>
-              <li>If <var data-type="HIDDeviceFilter">filter</var>["<a data-link-type="idl" href="#dom-hiddevicefilter-productid" class="internalDFN" id="ref-for-dom-hiddevicefilter-productid-1"><code>productId</code></a>"] is present and
-              <var data-type="HIDDeviceFilter">filter</var>["<a data-link-type="idl" href="#dom-hiddevicefilter-vendorid" class="internalDFN" id="ref-for-dom-hiddevicefilter-vendorid-1"><code>vendorId</code></a>"] is not present,
-              <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#reject">reject</a> <var data-type="Promise">promise</var> with a <a data-link-type="idl" data-lt="TypeError" data-type="exception" href="https://webidl.spec.whatwg.org/#exceptiondef-typeerror"><code>TypeError</code></a> and return <var data-type="Promise">promise</var>.
-              </li>
-              <li>If <var data-type="HIDDeviceFilter">filter</var>["<a data-link-type="idl" href="#dom-hiddevicefilter-usage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usage-1"><code>usage</code></a>"] is present and
-              <var data-type="HIDDeviceFilter">filter</var>["<a data-link-type="idl" href="#dom-hiddevicefilter-usagepage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usagepage-1"><code>usagePage</code></a>"] is not present,
-              <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#reject">reject</a> <var data-type="Promise">promise</var> with a <a data-link-type="idl" data-lt="TypeError" data-type="exception" href="https://webidl.spec.whatwg.org/#exceptiondef-typeerror"><code>TypeError</code></a> and return <var data-type="Promise">promise</var>.
+              <li><a data-link-type="dfn" data-type="dfn" href="https://infra.spec.whatwg.org/#list-iterate">For each</a> <var data-type="HIDDeviceFilter">exclusionFilter</var> of
+              <var>options</var>["<a data-link-type="idl" href="#dom-hiddevicerequestoptions-exclusionfilters" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-exclusionfilters-3"><code>exclusionFilters</code></a>"]:
+                <ol>
+                  <li>If <var data-type="HIDDeviceFilter">exclusionFilter</var> is not <a data-link-type="dfn" href="#dfn-a-valid-filter" class="internalDFN" id="ref-for-dfn-a-valid-filter-2">a valid filter</a>, then
+                  <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#reject">reject</a> <var data-type="Promise">promise</var> with a <a data-link-type="idl" data-lt="TypeError" data-type="exception" href="https://webidl.spec.whatwg.org/#exceptiondef-typeerror"><code>TypeError</code></a> and return
+                  <var data-type="Promise">promise</var>.
+                  </li>
+                </ol>
               </li>
             </ol>
           </li>
@@ -1305,9 +1325,11 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
               <li><a data-link-type="dfn" data-type="dfn" href="https://infra.spec.whatwg.org/#list-iterate">For each</a> <var data-type="HIDDevice">device</var> of
               <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#this">this</a>.<a data-lt="[[devices]]" href="#dfn-devices" class="internalDFN" data-link-type="idl" id="ref-for-dfn-devices-5"><code>[[devices]]</code></a>:
                 <ol>
-                  <li>If <var data-type="HIDDevice">device</var> <a data-link-type="dfn" href="#dfn-matches-any-filter" class="internalDFN" id="ref-for-dfn-matches-any-filter-1">matches any filter</a> in
-                  <var>options</var>["<a data-link-type="idl" href="#dom-hiddevicerequestoptions-filters" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-filters-3"><code>filters</code></a>"], then
-                  <a data-link-type="dfn" data-type="dfn" href="https://infra.spec.whatwg.org/#list-append">append</a> <var data-type="HIDDevice">device</var> to <var>availableDevices</var>.
+                  <li>If <var data-type="HIDDevice">device</var> <a data-link-type="dfn" href="#dfn-match-any-filter" class="internalDFN" id="ref-for-dfn-match-any-filter-1">matches any filter</a> in
+                  <var>options</var>["<a data-link-type="idl" href="#dom-hiddevicerequestoptions-filters" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-filters-3"><code>filters</code></a>"] and <var data-type="HIDDevice">device</var>
+                  does not <a data-link-type="dfn" href="#dfn-match-any-filter" class="internalDFN" id="ref-for-dfn-match-any-filter-2">match any filter</a> in
+                  <var>options</var>["<a data-link-type="idl" href="#dom-hiddevicerequestoptions-exclusionfilters" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-exclusionfilters-4"><code>exclusionFilters</code></a>"],
+                  then <a data-link-type="dfn" data-type="dfn" href="https://infra.spec.whatwg.org/#list-append">append</a> <var data-type="HIDDevice">device</var> to <var>availableDevices</var>.
                   </li>
                 </ol>
               </li>
@@ -1348,12 +1370,13 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
           <li>Return <var data-type="Promise">promise</var>.
           </li>
         </ol>
-        <section data-dfn-for="HIDDeviceRequestOptions" id="hiddevicerequestoptions-dictionary">
-          <h4 id="x5-2-1-hiddevicerequestoptions-dictionary"><bdi class="secno">5.2.1 </bdi>
+        <section data-dfn-for="HIDDeviceRequestOptions" id="hiddevicerequestoptions-dictionary"><div class="header-wrapper"><h4 id="x5-2-1-hiddevicerequestoptions-dictionary"><bdi class="secno">5.2.1 </bdi>
             <dfn data-export="" data-dfn-type="dictionary" id="dom-hiddevicerequestoptions" data-idl="dictionary" data-title="HIDDeviceRequestOptions" data-dfn-for="" tabindex="0" aria-haspopup="dialog"><code>HIDDeviceRequestOptions</code></dfn> dictionary
-          <a class="self-link" href="#hiddevicerequestoptions-dictionary" aria-label="Permalink for Section 5.2.1"></a></h4>
-          <pre class="idl def" id="webidl-319047892"><span class="idlHeader"><a class="self-link" href="#webidl-319047892">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hiddevicerequestoptions" data-title="HIDDeviceRequestOptions">dictionary <a class="internalDFN idlID" data-link-type="dictionary" href="#dom-hiddevicerequestoptions" id="ref-for-dom-hiddevicerequestoptions-2"><code>HIDDeviceRequestOptions</code></a> {<span data-idl="" class="idlMember" id="idl-def-hiddevicerequestoptions-filters" data-title="filters" data-dfn-for="HIDDeviceRequestOptions">
-    required<span class="idlType"> <a data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>&lt;<a href="#dom-hiddevicefilter" class="internalDFN" data-link-type="idl" id="ref-for-dom-hiddevicefilter-1"><code>HIDDeviceFilter</code></a>&gt;</span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicerequestoptions-filters" id="ref-for-dom-hiddevicerequestoptions-filters-4"><code>filters</code></a>;</span>
+          </h4><a class="self-link" href="#hiddevicerequestoptions-dictionary" aria-label="Permalink for Section 5.2.1"></a></div>
+          
+          <pre class="idl def" id="webidl-2134743190"><span class="idlHeader"><a class="self-link" href="#webidl-2134743190">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hiddevicerequestoptions" data-title="HIDDeviceRequestOptions">dictionary <a class="internalDFN idlID" data-link-type="dictionary" href="#dom-hiddevicerequestoptions" id="ref-for-dom-hiddevicerequestoptions-2"><code>HIDDeviceRequestOptions</code></a> {<span data-idl="" class="idlMember" id="idl-def-hiddevicerequestoptions-filters" data-title="filters" data-dfn-for="HIDDeviceRequestOptions">
+    required<span class="idlType"> <a data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>&lt;<a href="#dom-hiddevicefilter" class="internalDFN" data-link-type="idl" id="ref-for-dom-hiddevicefilter-1"><code>HIDDeviceFilter</code></a>&gt;</span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicerequestoptions-filters" id="ref-for-dom-hiddevicerequestoptions-filters-4"><code>filters</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hiddevicerequestoptions-exclusionfilters" data-title="exclusionFilters" data-dfn-for="HIDDeviceRequestOptions"><span class="idlType">
+    <a data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>&lt;<a href="#dom-hiddevicefilter" class="internalDFN" data-link-type="idl" id="ref-for-dom-hiddevicefilter-2"><code>HIDDeviceFilter</code></a>&gt;</span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicerequestoptions-exclusionfilters" id="ref-for-dom-hiddevicerequestoptions-exclusionfilters-5"><code>exclusionFilters</code></a>;</span>
 };</span></code></pre>
           <dl>
             <dt>
@@ -1362,17 +1385,23 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
             <dd>
               Filters for HID devices.
             </dd>
+            <dt>
+              <dfn data-export="" data-dfn-type="dict-member" id="dom-hiddevicerequestoptions-exclusionfilters" data-idl="field" data-title="exclusionFilters" data-dfn-for="HIDDeviceRequestOptions" data-type="sequence" tabindex="0" aria-haspopup="dialog"><code>exclusionFilters</code></dfn> member
+            </dt>
+            <dd>
+              Exclusion filters for HID devices.
+            </dd>
           </dl>
         </section>
-        <section data-dfn-for="HIDDeviceFilter" id="hiddevicefilter-dictionary">
-          <h4 id="x5-2-2-hiddevicefilter-dictionary"><bdi class="secno">5.2.2 </bdi>
+        <section data-dfn-for="HIDDeviceFilter" id="hiddevicefilter-dictionary"><div class="header-wrapper"><h4 id="x5-2-2-hiddevicefilter-dictionary"><bdi class="secno">5.2.2 </bdi>
             <dfn data-export="" data-dfn-type="dictionary" id="dom-hiddevicefilter" data-idl="dictionary" data-title="HIDDeviceFilter" data-dfn-for="" tabindex="0" aria-haspopup="dialog"><code>HIDDeviceFilter</code></dfn> dictionary
-          <a class="self-link" href="#hiddevicefilter-dictionary" aria-label="Permalink for Section 5.2.2"></a></h4>
-          <pre class="idl def" id="webidl-477316806"><span class="idlHeader"><a class="self-link" href="#webidl-477316806">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hiddevicefilter" data-title="HIDDeviceFilter">dictionary <a class="internalDFN idlID" data-link-type="dictionary" href="#dom-hiddevicefilter" id="ref-for-dom-hiddevicefilter-2"><code>HIDDeviceFilter</code></a> {<span data-idl="" class="idlMember" id="idl-def-hiddevicefilter-vendorid" data-title="vendorId" data-dfn-for="HIDDeviceFilter"><span class="idlType">
-    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-long">unsigned long</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicefilter-vendorid" id="ref-for-dom-hiddevicefilter-vendorid-2"><code>vendorId</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hiddevicefilter-productid" data-title="productId" data-dfn-for="HIDDeviceFilter"><span class="idlType">
-    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-short">unsigned short</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicefilter-productid" id="ref-for-dom-hiddevicefilter-productid-2"><code>productId</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hiddevicefilter-usagepage" data-title="usagePage" data-dfn-for="HIDDeviceFilter"><span class="idlType">
-    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-short">unsigned short</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicefilter-usagepage" id="ref-for-dom-hiddevicefilter-usagepage-2"><code>usagePage</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hiddevicefilter-usage" data-title="usage" data-dfn-for="HIDDeviceFilter"><span class="idlType">
-    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-short">unsigned short</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicefilter-usage" id="ref-for-dom-hiddevicefilter-usage-2"><code>usage</code></a>;</span>
+          </h4><a class="self-link" href="#hiddevicefilter-dictionary" aria-label="Permalink for Section 5.2.2"></a></div>
+          
+          <pre class="idl def" id="webidl-477316806"><span class="idlHeader"><a class="self-link" href="#webidl-477316806">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hiddevicefilter" data-title="HIDDeviceFilter">dictionary <a class="internalDFN idlID" data-link-type="dictionary" href="#dom-hiddevicefilter" id="ref-for-dom-hiddevicefilter-3"><code>HIDDeviceFilter</code></a> {<span data-idl="" class="idlMember" id="idl-def-hiddevicefilter-vendorid" data-title="vendorId" data-dfn-for="HIDDeviceFilter"><span class="idlType">
+    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-long">unsigned long</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicefilter-vendorid" id="ref-for-dom-hiddevicefilter-vendorid-1"><code>vendorId</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hiddevicefilter-productid" data-title="productId" data-dfn-for="HIDDeviceFilter"><span class="idlType">
+    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-short">unsigned short</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicefilter-productid" id="ref-for-dom-hiddevicefilter-productid-1"><code>productId</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hiddevicefilter-usagepage" data-title="usagePage" data-dfn-for="HIDDeviceFilter"><span class="idlType">
+    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-short">unsigned short</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicefilter-usagepage" id="ref-for-dom-hiddevicefilter-usagepage-1"><code>usagePage</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hiddevicefilter-usage" data-title="usage" data-dfn-for="HIDDeviceFilter"><span class="idlType">
+    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-short">unsigned short</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hiddevicefilter-usage" id="ref-for-dom-hiddevicefilter-usage-1"><code>usage</code></a>;</span>
 };</span></code></pre>
           <dl>
             <dt>
@@ -1385,8 +1414,8 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
               <dfn data-export="" data-dfn-type="dict-member" id="dom-hiddevicefilter-productid" data-idl="field" data-title="productId" data-dfn-for="HIDDeviceFilter" data-type="unsigned short" tabindex="0" aria-haspopup="dialog"><code>productId</code></dfn> member
             </dt>
             <dd>
-              The <a data-link-type="dfn" href="#dfn-product-id" class="internalDFN" id="ref-for-dfn-product-id-4">product ID</a> to match. If the <a data-link-type="idl" href="#dom-hiddevicefilter-vendorid" class="internalDFN" id="ref-for-dom-hiddevicefilter-vendorid-3"><code>vendorId</code></a>
-              member is not present, <a data-link-type="idl" href="#dom-hiddevicefilter-productid" class="internalDFN" id="ref-for-dom-hiddevicefilter-productid-3"><code>productId</code></a> is ignored.
+              The <a data-link-type="dfn" href="#dfn-product-id" class="internalDFN" id="ref-for-dfn-product-id-4">product ID</a> to match. If the <a data-link-type="idl" href="#dom-hiddevicefilter-vendorid" class="internalDFN" id="ref-for-dom-hiddevicefilter-vendorid-2"><code>vendorId</code></a>
+              member is not present, <a data-link-type="idl" href="#dom-hiddevicefilter-productid" class="internalDFN" id="ref-for-dom-hiddevicefilter-productid-2"><code>productId</code></a> is ignored.
             </dd>
             <dt>
               <dfn data-export="" data-dfn-type="dict-member" id="dom-hiddevicefilter-usagepage" data-idl="field" data-title="usagePage" data-dfn-for="HIDDeviceFilter" data-type="unsigned short" tabindex="0" aria-haspopup="dialog"><code>usagePage</code></dfn> member
@@ -1399,34 +1428,35 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
             </dt>
             <dd>
               The <a data-link-type="dfn" href="#dfn-top-level-collections" class="internalDFN" id="ref-for-dfn-top-level-collections-4">top-level collection</a> <a data-link-type="dfn" href="#dfn-usage-id" class="internalDFN" id="ref-for-dfn-usage-id-1">usage ID</a> to match. If the
-              <a data-link-type="idl" href="#dom-hiddevicefilter-usagepage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usagepage-3"><code>usagePage</code></a> member is not present,
-              <a data-link-type="idl" href="#dom-hiddevicefilter-usage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usage-3"><code>usage</code></a> is ignored.
+              <a data-link-type="idl" href="#dom-hiddevicefilter-usagepage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usagepage-2"><code>usagePage</code></a> member is not present,
+              <a data-link-type="idl" href="#dom-hiddevicefilter-usage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usage-2"><code>usage</code></a> is ignored.
             </dd>
           </dl>
           <div class="note" role="note" id="issue-container-generatedID-6"><div role="heading" class="note-title marker" id="h-note-6" aria-level="5"><span>Note</span></div><div class="">
             <p>
-              Device filters are used to narrow the list of devices presented
-              to the user in the chooser dialog created by
-              <a data-link-type="idl" data-lt="requestDevice()" href="#dom-hid-requestdevice" class="internalDFN" id="ref-for-dom-hid-requestdevice-7"><code>requestDevice</code></a><code>()</code>. When no filters are provided, all
-              connected devices are included. When one or more filters are
-              provided, a device is included if any filter matches.
+              Device filters are used to narrow the list of devices presented to
+              the user in the chooser dialog created by <a data-link-type="idl" data-lt="requestDevice()" href="#dom-hid-requestdevice" class="internalDFN" id="ref-for-dom-hid-requestdevice-7"><code>requestDevice</code></a><code>()</code>.
+              When no filters are provided, all connected devices matching no
+              exclusion filters are included. When one or more filters are
+              provided, a device is included if any filter matches and no
+              exclusion filters matches.
             </p>
             <p>
-              All <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-3"><code>HIDDeviceFilter</code></a> members are optional. Each member
-              specifies a rule. To match a <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-4"><code>HIDDeviceFilter</code></a>, every rule must
-              be satisfied. An empty <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-5"><code>HIDDeviceFilter</code></a> matches any device.
+              All <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-4"><code>HIDDeviceFilter</code></a> members are optional. Each member
+              specifies a rule. To match a <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-5"><code>HIDDeviceFilter</code></a>, every rule must
+              be satisfied. An empty <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-6"><code>HIDDeviceFilter</code></a> matches any device.
             </p>
             <p>
               Device ID rules are used to select devices by their <a data-link-type="dfn" href="#dfn-vendor-id" class="internalDFN" id="ref-for-dfn-vendor-id-5">vendor ID</a>
               and <a data-link-type="dfn" href="#dfn-product-id" class="internalDFN" id="ref-for-dfn-product-id-5">product ID</a>. This is useful when an application is only
               designed to work with a specific device, or otherwise relies on
               vendor-specific functionality. Including a
-              <a data-link-type="idl" href="#dom-hiddevicefilter-vendorid" class="internalDFN" id="ref-for-dom-hiddevicefilter-vendorid-4"><code>vendorId</code></a> rule causes the filter to only match
+              <a data-link-type="idl" href="#dom-hiddevicefilter-vendorid" class="internalDFN" id="ref-for-dom-hiddevicefilter-vendorid-3"><code>vendorId</code></a> rule causes the filter to only match
               devices with the specified <a data-link-type="dfn" href="#dfn-vendor-id" class="internalDFN" id="ref-for-dfn-vendor-id-6">vendor ID</a>. If a
-              <a data-link-type="idl" href="#dom-hiddevicefilter-productid" class="internalDFN" id="ref-for-dom-hiddevicefilter-productid-4"><code>productId</code></a> rule is also included, the filter
+              <a data-link-type="idl" href="#dom-hiddevicefilter-productid" class="internalDFN" id="ref-for-dom-hiddevicefilter-productid-3"><code>productId</code></a> rule is also included, the filter
               will only match devices with the specified <a data-link-type="dfn" href="#dfn-vendor-id" class="internalDFN" id="ref-for-dfn-vendor-id-7">vendor ID</a> and
-              <a data-link-type="dfn" href="#dfn-product-id" class="internalDFN" id="ref-for-dfn-product-id-6">product ID</a>. <a data-link-type="idl" href="#dom-hiddevicefilter-productid" class="internalDFN" id="ref-for-dom-hiddevicefilter-productid-5"><code>productId</code></a> is ignored if it is
-              specified without a <a data-link-type="idl" href="#dom-hiddevicefilter-vendorid" class="internalDFN" id="ref-for-dom-hiddevicefilter-vendorid-5"><code>vendorId</code></a> rule.
+              <a data-link-type="dfn" href="#dfn-product-id" class="internalDFN" id="ref-for-dfn-product-id-6">product ID</a>. <a data-link-type="idl" href="#dom-hiddevicefilter-productid" class="internalDFN" id="ref-for-dom-hiddevicefilter-productid-4"><code>productId</code></a> is ignored if it is
+              specified without a <a data-link-type="idl" href="#dom-hiddevicefilter-vendorid" class="internalDFN" id="ref-for-dom-hiddevicefilter-vendorid-4"><code>vendorId</code></a> rule.
             </p>
             <p>
               Usage rules are used to select devices by the <a data-link-type="dfn" href="#dfn-hid-usages" class="internalDFN" id="ref-for-dfn-hid-usages-4">HID usages</a>
@@ -1434,24 +1464,49 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
               useful when an application is designed to work with a standard
               class of device. To match a device, at least one of the device's
               collections must match every usage rule. Including a
-              <a data-link-type="idl" href="#dom-hiddevicefilter-usagepage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usagepage-4"><code>usagePage</code></a> rule causes the filter to only
+              <a data-link-type="idl" href="#dom-hiddevicefilter-usagepage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usagepage-3"><code>usagePage</code></a> rule causes the filter to only
               match if the device contains a collection with the specified
-              <a data-link-type="dfn" href="#dfn-usage-page" class="internalDFN" id="ref-for-dfn-usage-page-2">usage page</a>. If a <a data-link-type="idl" href="#dom-hiddevicefilter-usage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usage-4"><code>usage</code></a> rule is also
+              <a data-link-type="dfn" href="#dfn-usage-page" class="internalDFN" id="ref-for-dfn-usage-page-2">usage page</a>. If a <a data-link-type="idl" href="#dom-hiddevicefilter-usage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usage-3"><code>usage</code></a> rule is also
               included, the filter will only match devices with the specified
-              <a data-link-type="dfn" href="#dfn-usage-page" class="internalDFN" id="ref-for-dfn-usage-page-3">usage page</a> and <a data-link-type="dfn" href="#dfn-usage-id" class="internalDFN" id="ref-for-dfn-usage-id-2">usage ID</a>. <a data-link-type="idl" href="#dom-hiddevicefilter-usage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usage-5"><code>usage</code></a> is
+              <a data-link-type="dfn" href="#dfn-usage-page" class="internalDFN" id="ref-for-dfn-usage-page-3">usage page</a> and <a data-link-type="dfn" href="#dfn-usage-id" class="internalDFN" id="ref-for-dfn-usage-id-2">usage ID</a>. <a data-link-type="idl" href="#dom-hiddevicefilter-usage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usage-4"><code>usage</code></a> is
               ignored if it is specified without a
-              <a data-link-type="idl" href="#dom-hiddevicefilter-usagepage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usagepage-5"><code>usagePage</code></a> rule.
+              <a data-link-type="idl" href="#dom-hiddevicefilter-usagepage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usagepage-4"><code>usagePage</code></a> rule.
             </p>
             <p>
               Device ID rules and usage rules may be combined. For instance, an
               application may want to match devices from a particular vendor,
               but only devices that implement a specific device class.
             </p>
+            <p>
+              The <a data-link-type="idl" href="#dom-hiddevicerequestoptions-exclusionfilters" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-exclusionfilters-6"><code>exclusionFilters</code></a> option allows an
+              application to exclude some devices presented to the user from the
+              chooser dialog created by <a data-link-type="idl" data-lt="requestDevice()" href="#dom-hid-requestdevice" class="internalDFN" id="ref-for-dom-hid-requestdevice-8"><code>requestDevice</code></a><code>()</code> that are known
+              to not work as expected, even though they implement a specific
+              device class for instance.
+            </p>
           </div></div>
           <p>
-            A <a data-link-type="idl" data-lt="HIDDevice" href="#dom-hiddevice" class="internalDFN" id="ref-for-dom-hiddevice-8"><code>HIDDevice</code></a> <var data-type="HIDDevice">device</var> <dfn id="dfn-matches-any-filter" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">matches any filter</dfn> in
-            a <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a> <var data-type="sequence<HIDDeviceFilter>">filters</var> of
-            <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-6"><code>HIDDeviceFilter</code></a> if these steps return <code>true</code>:
+            A <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-7"><code>HIDDeviceFilter</code></a> <var data-type="HIDDeviceFilter">filter</var> is <dfn id="dfn-a-valid-filter" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">a valid
+            filter</dfn> if these steps return <code>true</code>:
+          </p>
+          <ol>
+            <li>If <var data-type="HIDDeviceFilter">filter</var> is empty, then return <code>false</code>.
+            </li>
+            <li>If <var data-type="HIDDeviceFilter">filter</var>["<a data-link-type="idl" href="#dom-hiddevicefilter-productid" class="internalDFN" id="ref-for-dom-hiddevicefilter-productid-5"><code>productId</code></a>"] is present and
+            <var data-type="HIDDeviceFilter">filter</var>["<a data-link-type="idl" href="#dom-hiddevicefilter-vendorid" class="internalDFN" id="ref-for-dom-hiddevicefilter-vendorid-5"><code>vendorId</code></a>"] is not present, then return
+            <code>false</code>.
+            </li>
+            <li>If <var data-type="HIDDeviceFilter">filter</var>["<a data-link-type="idl" href="#dom-hiddevicefilter-usage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usage-5"><code>usage</code></a>"] is present and
+            <var data-type="HIDDeviceFilter">filter</var>["<a data-link-type="idl" href="#dom-hiddevicefilter-usagepage" class="internalDFN" id="ref-for-dom-hiddevicefilter-usagepage-5"><code>usagePage</code></a>"] is not present, then
+            return <code>false</code>.
+            </li>
+            <li>Return <code>true</code>.
+            </li>
+          </ol>
+          <p>
+            A <a data-link-type="idl" data-lt="HIDDevice" href="#dom-hiddevice" class="internalDFN" id="ref-for-dom-hiddevice-8"><code>HIDDevice</code></a> <var data-type="HIDDevice">device</var> <dfn data-lt="match any filter|matches any filter" id="dfn-match-any-filter" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">matches any filter</dfn> in a <a data-link-type="dfn" data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>
+            <var data-type="sequence<HIDDeviceFilter>">filters</var> of <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-8"><code>HIDDeviceFilter</code></a> if
+            these steps return <code>true</code>:
           </p>
           <ol>
             <li>If <var data-type="sequence<HIDDeviceFilter>">filters</var> is empty, then return <code>true</code>.
@@ -1468,7 +1523,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
             </li>
           </ol>
           <p>
-            A <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-7"><code>HIDDeviceFilter</code></a> <var data-type="HIDDeviceFilter">filter</var> <dfn id="dfn-matches-the-device-ids" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">matches the
+            A <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-9"><code>HIDDeviceFilter</code></a> <var data-type="HIDDeviceFilter">filter</var> <dfn id="dfn-matches-the-device-ids" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">matches the
             device IDs</dfn> of <var data-type="HIDDevice">device</var> if these steps return
             <code>true</code>:
           </p>
@@ -1488,7 +1543,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
             </li>
           </ol>
           <p>
-            A <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-8"><code>HIDDeviceFilter</code></a> <var data-type="HIDDeviceFilter">filter</var> <dfn id="dfn-matches-any-collection" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">matches any
+            A <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-10"><code>HIDDeviceFilter</code></a> <var data-type="HIDDeviceFilter">filter</var> <dfn id="dfn-matches-any-collection" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">matches any
             collection</dfn> of <var data-type="HIDDevice">device</var> if these steps return
             <code>true</code>:
           </p>
@@ -1505,7 +1560,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
             </li>
           </ol>
           <p>
-            A <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-9"><code>HIDDeviceFilter</code></a> <var data-type="HIDDeviceFilter">filter</var> <dfn id="dfn-matches-the-collection" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">matches the
+            A <a data-link-type="idl" data-lt="HIDDeviceFilter" href="#dom-hiddevicefilter" class="internalDFN" id="ref-for-dom-hiddevicefilter-11"><code>HIDDeviceFilter</code></a> <var data-type="HIDDeviceFilter">filter</var> <dfn id="dfn-matches-the-collection" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">matches the
             collection</dfn> <var data-type="HIDCollectionInfo">collection</var> if these steps
             return <code>true</code>:
           </p>
@@ -1528,11 +1583,11 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="i
         </section>
       </section>
     </section>
-    <section data-dfn-for="HIDDevice" id="hiddevice-interface">
-      <h2 id="x6-hiddevice-interface"><bdi class="secno">6. </bdi>
+    <section data-dfn-for="HIDDevice" id="hiddevice-interface"><div class="header-wrapper"><h2 id="x6-hiddevice-interface"><bdi class="secno">6. </bdi>
         <code>HIDDevice</code> interface
-      <a class="self-link" href="#hiddevice-interface" aria-label="Permalink for Section 6."></a></h2>
-      <pre class="idl def" id="webidl-2087422874"><span class="idlHeader"><a class="self-link" href="#webidl-2087422874">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hiddevice" data-title="HIDDevice">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=<a data-type="interface" href="https://html.spec.whatwg.org/multipage/window-object.html#window">Window</a></span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
+      </h2><a class="self-link" href="#hiddevice-interface" aria-label="Permalink for Section 6."></a></div>
+      
+      <pre class="idl def" id="webidl-2087422874"><span class="idlHeader"><a class="self-link" href="#webidl-2087422874">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hiddevice" data-title="HIDDevice">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=Window</span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
 interface <dfn data-export="" data-dfn-type="interface" id="dom-hiddevice" data-idl="interface" data-title="HIDDevice" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HIDDevice</code></dfn> : <span class="idlSuperclass"><a data-type="interface" href="https://dom.spec.whatwg.org/#eventtarget">EventTarget</a></span> {<span data-idl="" class="idlAttribute" id="idl-def-hiddevice-oninputreport" data-title="oninputreport" data-dfn-for="HIDDevice">
     attribute<span class="idlType"> <a data-type="typedef" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler">EventHandler</a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-hiddevice-oninputreport" id="ref-for-dom-hiddevice-oninputreport-1"><code>oninputreport</code></a>;</span><span data-idl="" class="idlAttribute" id="idl-def-hiddevice-opened" data-title="opened" data-dfn-for="HIDDevice">
     readonly attribute<span class="idlType"> <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-boolean">boolean</a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-hiddevice-opened" id="ref-for-dom-hiddevice-opened-1"><code>opened</code></a>;</span><span data-idl="" class="idlAttribute" id="idl-def-hiddevice-vendorid" data-title="vendorId" data-dfn-for="HIDDevice">
@@ -1803,10 +1858,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hiddevice" data-
         to <var data-type="DataView">data</var>.
         </li>
       </ol>
-      <section id="open-method">
-        <h3 id="x6-1-open-method"><bdi class="secno">6.1 </bdi>
+      <section id="open-method"><div class="header-wrapper"><h3 id="x6-1-open-method"><bdi class="secno">6.1 </bdi>
           <dfn data-export="" data-dfn-type="method" id="dom-hiddevice-open" data-idl="operation" data-title="open()" data-dfn-for="HIDDevice" data-type="Promise" data-lt="open()" data-local-lt="HIDDevice.open|HIDDevice.open()|open" tabindex="0" aria-haspopup="dialog"><code>open()</code></dfn> method
-        <a class="self-link" href="#open-method" aria-label="Permalink for Section 6.1"></a></h3>
+        </h3><a class="self-link" href="#open-method" aria-label="Permalink for Section 6.1"></a></div>
+        
         <p>
           The <a data-link-type="idl" data-lt="open()" href="#dom-hiddevice-open" class="internalDFN" id="ref-for-dom-hiddevice-open-2"><code>open</code></a><code>()</code> method steps are:
         </p>
@@ -1839,10 +1894,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hiddevice" data-
           </li>
         </ol>
       </section>
-      <section id="close-method">
-        <h3 id="x6-2-close-method"><bdi class="secno">6.2 </bdi>
+      <section id="close-method"><div class="header-wrapper"><h3 id="x6-2-close-method"><bdi class="secno">6.2 </bdi>
           <dfn data-export="" data-dfn-type="method" id="dom-hiddevice-close" data-idl="operation" data-title="close()" data-dfn-for="HIDDevice" data-type="Promise" data-lt="close()" data-local-lt="HIDDevice.close|HIDDevice.close()|close" tabindex="0" aria-haspopup="dialog"><code>close()</code></dfn> method
-        <a class="self-link" href="#close-method" aria-label="Permalink for Section 6.2"></a></h3>
+        </h3><a class="self-link" href="#close-method" aria-label="Permalink for Section 6.2"></a></div>
+        
         <p>
           The <a data-link-type="idl" data-lt="close()" href="#dom-hiddevice-close" class="internalDFN" id="ref-for-dom-hiddevice-close-2"><code>close</code></a><code>()</code> method steps are:
         </p>
@@ -1905,10 +1960,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hiddevice" data-
           </li>
         </ol>
       </section>
-      <section id="forget-method">
-        <h3 id="x6-3-forget-method"><bdi class="secno">6.3 </bdi>
+      <section id="forget-method"><div class="header-wrapper"><h3 id="x6-3-forget-method"><bdi class="secno">6.3 </bdi>
           <dfn data-export="" data-dfn-type="method" id="dom-hiddevice-forget" data-idl="operation" data-title="forget()" data-dfn-for="HIDDevice" data-type="Promise" data-lt="forget()" data-local-lt="HIDDevice.forget|HIDDevice.forget()|forget" tabindex="0" aria-haspopup="dialog"><code>forget()</code></dfn> method
-        <a class="self-link" href="#forget-method" aria-label="Permalink for Section 6.3"></a></h3>
+        </h3><a class="self-link" href="#forget-method" aria-label="Permalink for Section 6.3"></a></div>
+        
         <div class="note" role="note" id="issue-container-generatedID-8"><div role="heading" class="note-title marker" id="h-note-8" aria-level="4"><span>Note</span></div><div class="">
           <p>
             The user agent <em class="rfc2119">MAY</em> decide to combine permissions across APIs, for
@@ -1984,10 +2039,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hiddevice" data-
           </li>
         </ol>
       </section>
-      <section id="sendreport-method">
-        <h3 id="x6-4-sendreport-method"><bdi class="secno">6.4 </bdi>
+      <section id="sendreport-method"><div class="header-wrapper"><h3 id="x6-4-sendreport-method"><bdi class="secno">6.4 </bdi>
           <dfn data-export="" data-dfn-type="method" id="dom-hiddevice-sendreport" data-idl="operation" data-title="sendReport()" data-dfn-for="HIDDevice" data-type="Promise" data-lt="sendReport()|sendReport(reportId, data)" data-local-lt="HIDDevice.sendReport|HIDDevice.sendReport()|sendReport" tabindex="0" aria-haspopup="dialog"><code>sendReport()</code></dfn> method
-        <a class="self-link" href="#sendreport-method" aria-label="Permalink for Section 6.4"></a></h3>
+        </h3><a class="self-link" href="#sendreport-method" aria-label="Permalink for Section 6.4"></a></div>
+        
         <div class="note" role="note" id="issue-container-generatedID-9"><div role="heading" class="note-title marker" id="h-note-9" aria-level="4"><span>Note</span></div><div class="">
           <p>
             The <a data-link-type="idl" data-lt="sendReport()" href="#dom-hiddevice-sendreport" class="internalDFN" id="ref-for-dom-hiddevice-sendreport-3"><code>sendReport</code></a><code>()</code> method is used to send an output
@@ -2041,10 +2096,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hiddevice" data-
           </li>
         </ol>
       </section>
-      <section id="sendfeaturereport-method">
-        <h3 id="x6-5-sendfeaturereport-method"><bdi class="secno">6.5 </bdi>
+      <section id="sendfeaturereport-method"><div class="header-wrapper"><h3 id="x6-5-sendfeaturereport-method"><bdi class="secno">6.5 </bdi>
           <dfn data-export="" data-dfn-type="method" id="dom-hiddevice-sendfeaturereport" data-idl="operation" data-title="sendFeatureReport()" data-dfn-for="HIDDevice" data-type="Promise" data-lt="sendFeatureReport()|sendFeatureReport(reportId, data)" data-local-lt="HIDDevice.sendFeatureReport|HIDDevice.sendFeatureReport()|sendFeatureReport" tabindex="0" aria-haspopup="dialog"><code>sendFeatureReport()</code></dfn> method
-        <a class="self-link" href="#sendfeaturereport-method" aria-label="Permalink for Section 6.5"></a></h3>
+        </h3><a class="self-link" href="#sendfeaturereport-method" aria-label="Permalink for Section 6.5"></a></div>
+        
         <div class="note" role="note" id="issue-container-generatedID-10"><div role="heading" class="note-title marker" id="h-note-10" aria-level="4"><span>Note</span></div><div class="">
           <p>
             The <a data-link-type="idl" data-lt="sendFeatureReport()" href="#dom-hiddevice-sendfeaturereport" class="internalDFN" id="ref-for-dom-hiddevice-sendfeaturereport-3"><code>sendFeatureReport</code></a><code>()</code> method is used to send a
@@ -2097,10 +2152,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hiddevice" data-
           </li>
         </ol>
       </section>
-      <section id="receivefeaturereport-method">
-        <h3 id="x6-6-receivefeaturereport-method"><bdi class="secno">6.6 </bdi>
+      <section id="receivefeaturereport-method"><div class="header-wrapper"><h3 id="x6-6-receivefeaturereport-method"><bdi class="secno">6.6 </bdi>
           <dfn data-export="" data-dfn-type="method" id="dom-hiddevice-receivefeaturereport" data-idl="operation" data-title="receiveFeatureReport()" data-dfn-for="HIDDevice" data-type="Promise" data-lt="receiveFeatureReport()|receiveFeatureReport(reportId)" data-local-lt="HIDDevice.receiveFeatureReport|HIDDevice.receiveFeatureReport()|receiveFeatureReport" tabindex="0" aria-haspopup="dialog"><code>receiveFeatureReport()</code></dfn> method
-        <a class="self-link" href="#receivefeaturereport-method" aria-label="Permalink for Section 6.6"></a></h3>
+        </h3><a class="self-link" href="#receivefeaturereport-method" aria-label="Permalink for Section 6.6"></a></div>
+        
         <div class="note" role="note" id="issue-container-generatedID-11"><div role="heading" class="note-title marker" id="h-note-11" aria-level="4"><span>Note</span></div><div class="">
           <p>
             The <a data-link-type="idl" data-lt="receiveFeatureReport()" href="#dom-hiddevice-receivefeaturereport" class="internalDFN" id="ref-for-dom-hiddevice-receivefeaturereport-3"><code>receiveFeatureReport</code></a><code>()</code> method is used to request
@@ -2162,11 +2217,11 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hiddevice" data-
         </ol>
       </section>
     </section>
-    <section data-dfn-for="HIDConnectionEvent" id="hidconnectionevent-interface">
-      <h2 id="x7-hidconnectionevent-interface"><bdi class="secno">7. </bdi>
+    <section data-dfn-for="HIDConnectionEvent" id="hidconnectionevent-interface"><div class="header-wrapper"><h2 id="x7-hidconnectionevent-interface"><bdi class="secno">7. </bdi>
         <code>HIDConnectionEvent</code> interface
-      <a class="self-link" href="#hidconnectionevent-interface" aria-label="Permalink for Section 7."></a></h2>
-      <pre class="idl def" id="webidl-726326281"><span class="idlHeader"><a class="self-link" href="#webidl-726326281">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hidconnectionevent" data-title="HIDConnectionEvent">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=<a data-type="interface" href="https://html.spec.whatwg.org/multipage/window-object.html#window">Window</a></span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
+      </h2><a class="self-link" href="#hidconnectionevent-interface" aria-label="Permalink for Section 7."></a></div>
+      
+      <pre class="idl def" id="webidl-726326281"><span class="idlHeader"><a class="self-link" href="#webidl-726326281">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hidconnectionevent" data-title="HIDConnectionEvent">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=Window</span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
 interface <dfn data-export="" data-dfn-type="interface" id="dom-hidconnectionevent" data-idl="interface" data-title="HIDConnectionEvent" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HIDConnectionEvent</code></dfn> : <span class="idlSuperclass"><a data-type="interface" href="https://dom.spec.whatwg.org/#event">Event</a></span> {<span data-idl="" class="idlConstructor" id="idl-def-hidconnectionevent-constructor-type-eventinitdict" data-title="constructor" data-dfn-for="HIDConnectionEvent">
     <dfn data-export="" data-dfn-type="constructor" id="dom-hidconnectionevent-constructor" data-idl="constructor" data-title="constructor" data-dfn-for="HIDConnectionEvent" data-lt="constructor()|constructor(type, eventInitDict)" data-local-lt="HIDConnectionEvent.constructor|HIDConnectionEvent.constructor()|constructor" tabindex="0" aria-haspopup="dialog"><code>constructor</code></dfn>(<span class="idlType"><a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-DOMString">DOMString</a></span> <span class="idlParamName">type</span>,<span class="idlType"> <a href="#dom-hidconnectioneventinit" class="internalDFN" data-link-type="idl" id="ref-for-dom-hidconnectioneventinit-1"><code>HIDConnectionEventInit</code></a></span> <span class="idlParamName">eventInitDict</span>);</span><span data-idl="" class="idlAttribute" id="idl-def-hidconnectionevent-device" data-title="device" data-dfn-for="HIDConnectionEvent">
     [<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject">SameObject</a></span>] readonly attribute<span class="idlType"> <a href="#dom-hiddevice" class="internalDFN" data-link-type="idl" id="ref-for-dom-hiddevice-12"><code>HIDDevice</code></a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-hidconnectionevent-device" id="ref-for-dom-hidconnectionevent-device-3"><code>device</code></a>;</span>
@@ -2180,10 +2235,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidconnectioneve
           disconnected device.
         </dd>
       </dl>
-      <section data-dfn-for="HIDConnectionEventInit" id="hidconnectioneventinit-dictionary">
-        <h3 id="x7-1-hidconnectioneventinit-dictionary"><bdi class="secno">7.1 </bdi>
+      <section data-dfn-for="HIDConnectionEventInit" id="hidconnectioneventinit-dictionary"><div class="header-wrapper"><h3 id="x7-1-hidconnectioneventinit-dictionary"><bdi class="secno">7.1 </bdi>
           <code>HIDConnectionEventInit</code> dictionary
-        <a class="self-link" href="#hidconnectioneventinit-dictionary" aria-label="Permalink for Section 7.1"></a></h3>
+        </h3><a class="self-link" href="#hidconnectioneventinit-dictionary" aria-label="Permalink for Section 7.1"></a></div>
+        
         <pre class="idl def" id="webidl-223203859"><span class="idlHeader"><a class="self-link" href="#webidl-223203859">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hidconnectioneventinit" data-title="HIDConnectionEventInit">dictionary <dfn data-export="" data-dfn-type="dictionary" id="dom-hidconnectioneventinit" data-idl="dictionary" data-title="HIDConnectionEventInit" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HIDConnectionEventInit</code></dfn> : <span class="idlSuperclass"><a data-type="dictionary" href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a></span> {<span data-idl="" class="idlMember" id="idl-def-hidconnectioneventinit-device" data-title="device" data-dfn-for="HIDConnectionEventInit">
     required<span class="idlType"> <a href="#dom-hiddevice" class="internalDFN" data-link-type="idl" id="ref-for-dom-hiddevice-14"><code>HIDDevice</code></a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidconnectioneventinit-device" id="ref-for-dom-hidconnectioneventinit-device-1"><code>device</code></a>;</span>
 };</span></code></pre>
@@ -2197,11 +2252,11 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidconnectioneve
         </dl>
       </section>
     </section>
-    <section data-dfn-for="HIDInputReportEvent" id="hidinputreportevent-interface">
-      <h2 id="x8-hidinputreportevent-interface"><bdi class="secno">8. </bdi>
+    <section data-dfn-for="HIDInputReportEvent" id="hidinputreportevent-interface"><div class="header-wrapper"><h2 id="x8-hidinputreportevent-interface"><bdi class="secno">8. </bdi>
         <code>HIDInputReportEvent</code> interface
-      <a class="self-link" href="#hidinputreportevent-interface" aria-label="Permalink for Section 8."></a></h2>
-      <pre class="idl def" id="webidl-221696130"><span class="idlHeader"><a class="self-link" href="#webidl-221696130">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hidinputreportevent" data-title="HIDInputReportEvent">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=<a data-type="interface" href="https://html.spec.whatwg.org/multipage/window-object.html#window">Window</a></span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
+      </h2><a class="self-link" href="#hidinputreportevent-interface" aria-label="Permalink for Section 8."></a></div>
+      
+      <pre class="idl def" id="webidl-221696130"><span class="idlHeader"><a class="self-link" href="#webidl-221696130">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hidinputreportevent" data-title="HIDInputReportEvent">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=Window</span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
 interface <dfn data-export="" data-dfn-type="interface" id="dom-hidinputreportevent" data-idl="interface" data-title="HIDInputReportEvent" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HIDInputReportEvent</code></dfn> : <span class="idlSuperclass"><a data-type="interface" href="https://dom.spec.whatwg.org/#event">Event</a></span> {<span data-idl="" class="idlConstructor" id="idl-def-hidinputreportevent-constructor-type-eventinitdict" data-title="constructor" data-dfn-for="HIDInputReportEvent">
     <dfn data-export="" data-dfn-type="constructor" id="dom-hidinputreportevent-constructor" data-idl="constructor" data-title="constructor" data-dfn-for="HIDInputReportEvent" data-lt="constructor()|constructor(type, eventInitDict)" data-local-lt="HIDInputReportEvent.constructor|HIDInputReportEvent.constructor()|constructor" tabindex="0" aria-haspopup="dialog"><code>constructor</code></dfn>(<span class="idlType"><a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-DOMString">DOMString</a></span> <span class="idlParamName">type</span>,<span class="idlType"> <a href="#dom-hidinputreporteventinit" class="internalDFN" data-link-type="idl" id="ref-for-dom-hidinputreporteventinit-1"><code>HIDInputReportEventInit</code></a></span> <span class="idlParamName">eventInitDict</span>);</span><span data-idl="" class="idlAttribute" id="idl-def-hidinputreportevent-device" data-title="device" data-dfn-for="HIDInputReportEvent">
     [<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject">SameObject</a></span>] readonly attribute<span class="idlType"> <a href="#dom-hiddevice" class="internalDFN" data-link-type="idl" id="ref-for-dom-hiddevice-15"><code>HIDDevice</code></a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-hidinputreportevent-device" id="ref-for-dom-hidinputreportevent-device-2"><code>device</code></a>;</span><span data-idl="" class="idlAttribute" id="idl-def-hidinputreportevent-reportid" data-title="reportId" data-dfn-for="HIDInputReportEvent">
@@ -2231,10 +2286,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidinputreportev
           <a data-link-type="dfn" href="#dfn-use-report-ids" class="internalDFN" id="ref-for-dfn-use-report-ids-17">uses report IDs</a>.
         </dd>
       </dl>
-      <section data-dfn-for="HIDInputReportEventInit" id="hidinputreporteventinit-dictionary">
-        <h3 id="x8-1-hidinputreporteventinit-dictionary"><bdi class="secno">8.1 </bdi>
+      <section data-dfn-for="HIDInputReportEventInit" id="hidinputreporteventinit-dictionary"><div class="header-wrapper"><h3 id="x8-1-hidinputreporteventinit-dictionary"><bdi class="secno">8.1 </bdi>
           <code>HIDInputReportEventInit</code> dictionary
-        <a class="self-link" href="#hidinputreporteventinit-dictionary" aria-label="Permalink for Section 8.1"></a></h3>
+        </h3><a class="self-link" href="#hidinputreporteventinit-dictionary" aria-label="Permalink for Section 8.1"></a></div>
+        
         <pre class="idl def" id="webidl-1012284892"><span class="idlHeader"><a class="self-link" href="#webidl-1012284892">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hidinputreporteventinit" data-title="HIDInputReportEventInit">dictionary <dfn data-export="" data-dfn-type="dictionary" id="dom-hidinputreporteventinit" data-idl="dictionary" data-title="HIDInputReportEventInit" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HIDInputReportEventInit</code></dfn> : <span class="idlSuperclass"><a data-type="dictionary" href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a></span> {<span data-idl="" class="idlMember" id="idl-def-hidinputreporteventinit-device" data-title="device" data-dfn-for="HIDInputReportEventInit">
     required<span class="idlType"> <a href="#dom-hiddevice" class="internalDFN" data-link-type="idl" id="ref-for-dom-hiddevice-17"><code>HIDDevice</code></a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidinputreporteventinit-device" id="ref-for-dom-hidinputreporteventinit-device-1"><code>device</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hidinputreporteventinit-reportid" data-title="reportId" data-dfn-for="HIDInputReportEventInit">
     required<span class="idlType"> <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-octet">octet</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidinputreporteventinit-reportid" id="ref-for-dom-hidinputreporteventinit-reportid-1"><code>reportId</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hidinputreporteventinit-data" data-title="data" data-dfn-for="HIDInputReportEventInit">
@@ -2262,10 +2317,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidinputreportev
         </dl>
       </section>
     </section>
-    <section data-dfn-for="HIDCollectionInfo" id="hidcollectioninfo-dictionary">
-      <h2 id="x9-hidcollectioninfo-dictionary"><bdi class="secno">9. </bdi>
+    <section data-dfn-for="HIDCollectionInfo" id="hidcollectioninfo-dictionary"><div class="header-wrapper"><h2 id="x9-hidcollectioninfo-dictionary"><bdi class="secno">9. </bdi>
         <code>HIDCollectionInfo</code> dictionary
-      <a class="self-link" href="#hidcollectioninfo-dictionary" aria-label="Permalink for Section 9."></a></h2>
+      </h2><a class="self-link" href="#hidcollectioninfo-dictionary" aria-label="Permalink for Section 9."></a></div>
+      
       <pre class="idl def" id="webidl-417964706"><span class="idlHeader"><a class="self-link" href="#webidl-417964706">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hidcollectioninfo" data-title="HIDCollectionInfo">dictionary <dfn data-export="" data-dfn-type="dictionary" id="dom-hidcollectioninfo" data-idl="dictionary" data-title="HIDCollectionInfo" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HIDCollectionInfo</code></dfn> {<span data-idl="" class="idlMember" id="idl-def-hidcollectioninfo-usagepage" data-title="usagePage" data-dfn-for="HIDCollectionInfo"><span class="idlType">
     <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-short">unsigned short</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidcollectioninfo-usagepage" id="ref-for-dom-hidcollectioninfo-usagepage-6"><code>usagePage</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hidcollectioninfo-usage" data-title="usage" data-dfn-for="HIDCollectionInfo"><span class="idlType">
     <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-short">unsigned short</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidcollectioninfo-usage" id="ref-for-dom-hidcollectioninfo-usage-4"><code>usage</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hidcollectioninfo-type" data-title="type" data-dfn-for="HIDCollectionInfo"><span class="idlType">
@@ -2468,10 +2523,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidinputreportev
         </dd>
       </dl>
     </section>
-    <section data-dfn-for="HIDReportInfo" id="hidreportinfo-dictionary">
-      <h2 id="x10-hidreportinfo-dictionary"><bdi class="secno">10. </bdi>
+    <section data-dfn-for="HIDReportInfo" id="hidreportinfo-dictionary"><div class="header-wrapper"><h2 id="x10-hidreportinfo-dictionary"><bdi class="secno">10. </bdi>
         <code>HIDReportInfo</code> dictionary
-      <a class="self-link" href="#hidreportinfo-dictionary" aria-label="Permalink for Section 10."></a></h2>
+      </h2><a class="self-link" href="#hidreportinfo-dictionary" aria-label="Permalink for Section 10."></a></div>
+      
       <pre class="idl def" id="webidl-752889187"><span class="idlHeader"><a class="self-link" href="#webidl-752889187">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hidreportinfo" data-title="HIDReportInfo">dictionary <dfn data-export="" data-dfn-type="dictionary" id="dom-hidreportinfo" data-idl="dictionary" data-title="HIDReportInfo" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HIDReportInfo</code></dfn> {<span data-idl="" class="idlMember" id="idl-def-hidreportinfo-reportid" data-title="reportId" data-dfn-for="HIDReportInfo"><span class="idlType">
     <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-octet">octet</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidreportinfo-reportid" id="ref-for-dom-hidreportinfo-reportid-5"><code>reportId</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hidreportinfo-items" data-title="items" data-dfn-for="HIDReportInfo"><span class="idlType">
     <a data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>&lt;<a href="#dom-hidreportitem" class="internalDFN" data-link-type="idl" id="ref-for-dom-hidreportitem-3"><code>HIDReportItem</code></a>&gt;</span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidreportinfo-items" id="ref-for-dom-hidreportinfo-items-3"><code>items</code></a>;</span>
@@ -2499,10 +2554,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidinputreportev
         </dd>
       </dl>
     </section>
-    <section data-dfn-for="HIDReportItem" id="hidreportitem-dictionary">
-      <h2 id="x11-hidreportitem-dictionary"><bdi class="secno">11. </bdi>
+    <section data-dfn-for="HIDReportItem" id="hidreportitem-dictionary"><div class="header-wrapper"><h2 id="x11-hidreportitem-dictionary"><bdi class="secno">11. </bdi>
         <code>HIDReportItem</code> dictionary
-      <a class="self-link" href="#hidreportitem-dictionary" aria-label="Permalink for Section 11."></a></h2>
+      </h2><a class="self-link" href="#hidreportitem-dictionary" aria-label="Permalink for Section 11."></a></div>
+      
       <pre class="idl def" id="webidl-2002036397"><span class="idlHeader"><a class="self-link" href="#webidl-2002036397">WebIDL</a></span><code><span data-idl="" class="idlDictionary" id="idl-def-hidreportitem" data-title="HIDReportItem">dictionary <dfn data-export="" data-dfn-type="dictionary" id="dom-hidreportitem" data-idl="dictionary" data-title="HIDReportItem" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HIDReportItem</code></dfn> {<span data-idl="" class="idlMember" id="idl-def-hidreportitem-isabsolute" data-title="isAbsolute" data-dfn-for="HIDReportItem"><span class="idlType">
     <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-boolean">boolean</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidreportitem-isabsolute" id="ref-for-dom-hidreportitem-isabsolute-2"><code>isAbsolute</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hidreportitem-isarray" data-title="isArray" data-dfn-for="HIDReportItem"><span class="idlType">
     <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-boolean">boolean</a></span> <a class="internalDFN idlName" data-link-type="dict-member" href="#dom-hidreportitem-isarray" id="ref-for-dom-hidreportitem-isarray-2"><code>isArray</code></a>;</span><span data-idl="" class="idlMember" id="idl-def-hidreportitem-isbufferedbytes" data-title="isBufferedBytes" data-dfn-for="HIDReportItem"><span class="idlType">
@@ -2775,10 +2830,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidinputreportev
         </dd>
       </dl>
     </section>
-    <section data-dfn-for="HIDUnitSystem" id="hidunitsystem-enum">
-      <h2 id="x12-hidunitsystem-enum"><bdi class="secno">12. </bdi>
+    <section data-dfn-for="HIDUnitSystem" id="hidunitsystem-enum"><div class="header-wrapper"><h2 id="x12-hidunitsystem-enum"><bdi class="secno">12. </bdi>
         <dfn data-export="" data-dfn-type="enum" id="dom-hidunitsystem" data-idl="enum" data-title="HIDUnitSystem" data-dfn-for="" tabindex="0" aria-haspopup="dialog"><code>HIDUnitSystem</code></dfn> enum
-      <a class="self-link" href="#hidunitsystem-enum" aria-label="Permalink for Section 12."></a></h2>
+      </h2><a class="self-link" href="#hidunitsystem-enum" aria-label="Permalink for Section 12."></a></div>
+      
       <p>
         [<cite><a class="bibref" data-link-type="biblio" href="#bib-usbif-hid-class" title="Device Class Definition for Human Interface Devices (HID) version 1.11">USBIF-HID-CLASS</a></cite>] section 6.2.2.7 defines four standard unit systems:
         SI Linear, SI Rotation, English Linear, and English Rotation. Each item
@@ -2839,10 +2894,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-hidinputreportev
         </dd>
       </dl>
     </section>
-    <section id="enumeration">
-      <h2 id="x13-usage-examples"><bdi class="secno">13. </bdi>
+    <section id="enumeration"><div class="header-wrapper"><h2 id="x13-usage-examples"><bdi class="secno">13. </bdi>
         Usage Examples
-      <a class="self-link" href="#enumeration" aria-label="Permalink for Section 13."></a></h2>
+      </h2><a class="self-link" href="#enumeration" aria-label="Permalink for Section 13."></a></div>
+      
       <aside class="example" id="example-1"><div class="marker">
     <a class="self-link" href="#example-1">Example<bdi> 1</bdi></a>
   </div>
@@ -2880,10 +2935,11 @@ navigator.hid.addEventListener(<span class="hljs-string">'disconnect'</span>, <s
           Devices are not accessible through <a data-link-type="idl" data-lt="getDevices()" href="#dom-hid-getdevices" class="internalDFN" id="ref-for-dom-hid-getdevices-3"><code>getDevices</code></a><code>()</code> and will not
           generate connection events until permission has been granted to
           access the device. The page may request permission using
-          <a data-link-type="idl" data-lt="requestDevice()" href="#dom-hid-requestdevice" class="internalDFN" id="ref-for-dom-hid-requestdevice-8"><code>requestDevice</code></a><code>()</code>. In this example, the page requests access to
-          a device with <a data-link-type="dfn" href="#dfn-vendor-id" class="internalDFN" id="ref-for-dfn-vendor-id-12">vendor ID</a> <code>0xABCD</code>, <a data-link-type="dfn" href="#dfn-product-id" class="internalDFN" id="ref-for-dfn-product-id-11">product ID</a> <code>0x1234</code>. The
-          device must also have a collection with <a data-link-type="dfn" href="#dfn-usage-page" class="internalDFN" id="ref-for-dfn-usage-page-6">usage page</a> Consumer
-          (<code>0x000C</code>) and <a data-link-type="dfn" href="#dfn-usage-id" class="internalDFN" id="ref-for-dfn-usage-id-6">usage ID</a> Consumer Control (<code>0x0001</code>).
+          <a data-link-type="idl" data-lt="requestDevice()" href="#dom-hid-requestdevice" class="internalDFN" id="ref-for-dom-hid-requestdevice-9"><code>requestDevice</code></a><code>()</code>. In this example, the page requests access to
+          a device with <a data-link-type="dfn" href="#dfn-vendor-id" class="internalDFN" id="ref-for-dfn-vendor-id-12">vendor ID</a> <code>0xABCD</code>. The device must also have a
+          collection with <a data-link-type="dfn" href="#dfn-usage-page" class="internalDFN" id="ref-for-dfn-usage-page-6">usage page</a> Consumer (<code>0x000C</code>) and <a data-link-type="dfn" href="#dfn-usage-id" class="internalDFN" id="ref-for-dfn-usage-id-6">usage ID</a>
+          Consumer Control (<code>0x0001</code>). The device with <a data-link-type="dfn" href="#dfn-product-id" class="internalDFN" id="ref-for-dfn-product-id-11">product ID</a> <code>0x1234</code>
+          has been reported as malfunctioning.
         </p>
         <pre aria-busy="false"><code class="hljs js"><span class="hljs-keyword">let</span> requestButton = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"request-hid-device"</span>);
 requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span class="hljs-keyword">async</span> () =&gt; {
@@ -2893,10 +2949,15 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <span class="hljs-attr">filters</span>: [
         {
           <span class="hljs-attr">vendorId</span>: <span class="hljs-number">0xabcd</span>,
-          <span class="hljs-attr">productId</span>: <span class="hljs-number">0x1234</span>,
           <span class="hljs-attr">usagePage</span>: <span class="hljs-number">0x000c</span>,
           <span class="hljs-attr">usage</span>: <span class="hljs-number">0x0001</span>,
         },
+      ],
+      <span class="hljs-attr">exclusionFilters</span>: [
+        {
+          <span class="hljs-attr">vendorId</span>: <span class="hljs-number">0xabcd</span>,
+          <span class="hljs-attr">productId</span>: <span class="hljs-number">0x1234</span>,
+        }
       ],
     });
     device = devices[<span class="hljs-number">0</span>];
@@ -2963,10 +3024,10 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
 }</code></pre>
       </aside>
     </section>
-    <section id="blocklist">
-      <h2 id="x14-the-hid-blocklist"><bdi class="secno">14. </bdi>
+    <section id="blocklist"><div class="header-wrapper"><h2 id="x14-the-hid-blocklist"><bdi class="secno">14. </bdi>
         The HID Blocklist
-      <a class="self-link" href="#blocklist" aria-label="Permalink for Section 14."></a></h2>
+      </h2><a class="self-link" href="#blocklist" aria-label="Permalink for Section 14."></a></div>
+      
       <p>
         This specification relies on a blocklist file in the <a href="https://github.com/WICG/webhid">https://github.com/WICG/webhid</a>
         repository to restrict the set of HID devices a website can access.
@@ -3032,14 +3093,14 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
         </li>
       </ol>
     </section>
-    <section id="integrations">
-      <h2 id="x15-integrations"><bdi class="secno">15. </bdi>
+    <section id="integrations"><div class="header-wrapper"><h2 id="x15-integrations"><bdi class="secno">15. </bdi>
         Integrations
-      <a class="self-link" href="#integrations" aria-label="Permalink for Section 15."></a></h2>
-      <section id="permissions-policy">
-        <h3 id="x15-1-permissions-policy"><bdi class="secno">15.1 </bdi>
+      </h2><a class="self-link" href="#integrations" aria-label="Permalink for Section 15."></a></div>
+      
+      <section id="permissions-policy"><div class="header-wrapper"><h3 id="x15-1-permissions-policy"><bdi class="secno">15.1 </bdi>
           Permissions Policy
-        <a class="self-link" href="#permissions-policy" aria-label="Permalink for Section 15.1"></a></h3>
+        </h3><a class="self-link" href="#permissions-policy" aria-label="Permalink for Section 15.1"></a></div>
+        
         <p>
           This specification defines a feature that controls whether the
           <a data-link-type="idl" href="#dom-navigator-hid" class="internalDFN" id="ref-for-dom-navigator-hid-5"><code>hid</code></a> attribute is exposed on the <a data-link-type="idl" data-lt="Navigator" data-type="interface" href="https://html.spec.whatwg.org/multipage/system-state.html#navigator"><code>Navigator</code></a> object.
@@ -3052,7 +3113,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
         </p>
       </section>
     </section>
-    <section id="conformance"><h2 id="x16-conformance"><bdi class="secno">16. </bdi>Conformance<a class="self-link" href="#conformance" aria-label="Permalink for Section 16."></a></h2><p>As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.</p><p>
+    <section id="conformance"><div class="header-wrapper"><h2 id="x16-conformance"><bdi class="secno">16. </bdi>Conformance</h2><a class="self-link" href="#conformance" aria-label="Permalink for Section 16."></a></div><p>As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.</p><p>
         The key words <em class="rfc2119">MAY</em>, <em class="rfc2119">MUST</em>, <em class="rfc2119">MUST NOT</em>, <em class="rfc2119">SHOULD</em>, and <em class="rfc2119">SHOULD NOT</em> in this document
         are to be interpreted as described in
         <a href="https://datatracker.ietf.org/doc/html/bcp14">BCP 14</a>
@@ -3061,21 +3122,45 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       </p>
       
     </section>
-    <section class="appendix" id="acknowledgements">
-      <h2 id="a-acknowledgements"><bdi class="secno">A. </bdi>
+    <section class="appendix" id="acknowledgements"><div class="header-wrapper"><h2 id="a-acknowledgements"><bdi class="secno">A. </bdi>
         Acknowledgements
-      <a class="self-link" href="#acknowledgements" aria-label="Permalink for Appendix A."></a></h2>The following people contributed to the development of this
+      </h2><a class="self-link" href="#acknowledgements" aria-label="Permalink for Appendix A."></a></div>
+      The following people contributed to the development of this
       document.
       <ul id="gh-contributors"><li><a href="https://github.com/autokagami">autokagami</a></li><li><a href="https://github.com/beaufortfrancois">François Beaufort</a></li><li><a href="https://github.com/jyasskin">Jeffrey Yasskin</a></li><li><a href="https://github.com/marcoscaceres">Marcos Cáceres</a></li><li><a href="https://github.com/onlykey">onlykey</a></li><li><a href="https://github.com/pehandersen-jabra">Peter Høy Andersen</a></li><li><a href="https://github.com/reillyeon">Reilly Grant</a></li><li><a href="https://github.com/luser">Ted Mielczarek</a></li><li><a href="https://github.com/tomayac">Thomas Steiner</a></li><li><a href="https://github.com/scheib">Vincent Scheib</a></li></ul>
     </section>
   
 
-<section id="references" class="appendix"><h2 id="b-references"><bdi class="secno">B. </bdi>References<a class="self-link" href="#references" aria-label="Permalink for Appendix B."></a></h2><section id="normative-references">
-    <h3 id="b-1-normative-references"><bdi class="secno">B.1 </bdi>Normative references<a class="self-link" href="#normative-references" aria-label="Permalink for Appendix B.1"></a></h3>
-    <dl class="bibliography"><dt id="bib-dom">[dom]</dt><dd><a href="https://dom.spec.whatwg.org/"><cite>DOM Standard</cite></a>. Anne van Kesteren.  WHATWG. Living Standard. URL: <a href="https://dom.spec.whatwg.org/">https://dom.spec.whatwg.org/</a></dd><dt id="bib-html">[HTML]</dt><dd><a href="https://html.spec.whatwg.org/multipage/"><cite>HTML Standard</cite></a>. Anne van Kesteren; Domenic Denicola; Ian Hickson; Philip Jägenstedt; Simon Pieters.  WHATWG. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a></dd><dt id="bib-infra">[infra]</dt><dd><a href="https://infra.spec.whatwg.org/"><cite>Infra Standard</cite></a>. Anne van Kesteren; Domenic Denicola.  WHATWG. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a></dd><dt id="bib-permissions-policy">[permissions-policy]</dt><dd><a href="https://www.w3.org/TR/permissions-policy-1/"><cite>Permissions Policy</cite></a>. Ian Clelland.  W3C. 16 July 2020. W3C Working Draft. URL: <a href="https://www.w3.org/TR/permissions-policy-1/">https://www.w3.org/TR/permissions-policy-1/</a></dd><dt id="bib-rfc2119">[RFC2119]</dt><dd><a href="https://www.rfc-editor.org/rfc/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. S. Bradner.  IETF. March 1997. Best Current Practice. URL: <a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a></dd><dt id="bib-rfc8174">[RFC8174]</dt><dd><a href="https://www.rfc-editor.org/rfc/rfc8174"><cite>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</cite></a>. B. Leiba.  IETF. May 2017. Best Current Practice. URL: <a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a></dd><dt id="bib-usbif-hid-class">[USBIF-HID-CLASS]</dt><dd><a href="https://www.usb.org/document-library/device-class-definition-hid-111"><cite>Device Class Definition for Human Interface Devices (HID) version 1.11</cite></a>. Mike Bergman et al.  USB Implementers Forum. May 27, 2001. Specification. URL: <a href="https://www.usb.org/document-library/device-class-definition-hid-111">https://www.usb.org/document-library/device-class-definition-hid-111</a></dd><dt id="bib-webidl">[WEBIDL]</dt><dd><a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Edgar Chen; Timothy Gu.  WHATWG. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a></dd></dl>
-  </section><section id="informative-references">
-    <h3 id="b-2-informative-references"><bdi class="secno">B.2 </bdi>Informative references<a class="self-link" href="#informative-references" aria-label="Permalink for Appendix B.2"></a></h3>
-    <dl class="bibliography"><dt id="bib-gamepad">[GAMEPAD]</dt><dd><a href="https://www.w3.org/TR/gamepad/"><cite>Gamepad</cite></a>. Steve Agoston; James Hollyer; Matthew Reynolds; Brandon Jones; Scott Graham; Theodore Mielczarek.  W3C. 5 August 2021. W3C Working Draft. URL: <a href="https://www.w3.org/TR/gamepad/">https://www.w3.org/TR/gamepad/</a></dd><dt id="bib-pointerevents">[pointerevents]</dt><dd><a href="https://www.w3.org/TR/pointerevents/"><cite>Pointer Events</cite></a>. Jacob Rossi; Matt Brubeck.  W3C. 4 April 2019. W3C Recommendation. URL: <a href="https://www.w3.org/TR/pointerevents/">https://www.w3.org/TR/pointerevents/</a></dd><dt id="bib-uievents">[uievents]</dt><dd><a href="https://www.w3.org/TR/uievents/"><cite>UI Events</cite></a>. Gary Kacmarcik; Travis Leithead.  W3C. 20 October 2021. W3C Working Draft. URL: <a href="https://www.w3.org/TR/uievents/">https://www.w3.org/TR/uievents/</a></dd><dt id="bib-usbif-hid-usage">[USBIF-HID-USAGE]</dt><dd><a href="https://www.usb.org/document-library/hid-usage-tables-122"><cite>HID Usage Tables for Universal Serial Bus (USB) version 1.22</cite></a>. David Abzarian et al.  USB Implementers Forum. April 6, 2021. Specification. URL: <a href="https://www.usb.org/document-library/hid-usage-tables-122">https://www.usb.org/document-library/hid-usage-tables-122</a></dd></dl>
+<section id="references" class="appendix"><div class="header-wrapper"><h2 id="b-references"><bdi class="secno">B. </bdi>References</h2><a class="self-link" href="#references" aria-label="Permalink for Appendix B."></a></div><section id="normative-references"><div class="header-wrapper"><h3 id="b-1-normative-references"><bdi class="secno">B.1 </bdi>Normative references</h3><a class="self-link" href="#normative-references" aria-label="Permalink for Appendix B.1"></a></div>
+    
+    <dl class="bibliography"><dt id="bib-dom">[dom]</dt><dd>
+      <a href="https://dom.spec.whatwg.org/"><cite>DOM Standard</cite></a>. Anne van Kesteren.  WHATWG. Living Standard. URL: <a href="https://dom.spec.whatwg.org/">https://dom.spec.whatwg.org/</a>
+    </dd><dt id="bib-html">[html]</dt><dd>
+      <a href="https://html.spec.whatwg.org/multipage/"><cite>HTML Standard</cite></a>. Anne van Kesteren; Domenic Denicola; Ian Hickson; Philip Jägenstedt; Simon Pieters.  WHATWG. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
+    </dd><dt id="bib-infra">[infra]</dt><dd>
+      <a href="https://infra.spec.whatwg.org/"><cite>Infra Standard</cite></a>. Anne van Kesteren; Domenic Denicola.  WHATWG. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a>
+    </dd><dt id="bib-permissions-policy">[permissions-policy]</dt><dd>
+      <a href="https://www.w3.org/TR/permissions-policy-1/"><cite>Permissions Policy</cite></a>. Ian Clelland.  W3C. 16 July 2020. W3C Working Draft. URL: <a href="https://www.w3.org/TR/permissions-policy-1/">https://www.w3.org/TR/permissions-policy-1/</a>
+    </dd><dt id="bib-rfc2119">[RFC2119]</dt><dd>
+      <a href="https://www.rfc-editor.org/rfc/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. S. Bradner.  IETF. March 1997. Best Current Practice. URL: <a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>
+    </dd><dt id="bib-rfc8174">[RFC8174]</dt><dd>
+      <a href="https://www.rfc-editor.org/rfc/rfc8174"><cite>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</cite></a>. B. Leiba.  IETF. May 2017. Best Current Practice. URL: <a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>
+    </dd><dt id="bib-usbif-hid-class">[USBIF-HID-CLASS]</dt><dd>
+      <a href="https://www.usb.org/document-library/device-class-definition-hid-111"><cite>Device Class Definition for Human Interface Devices (HID) version 1.11</cite></a>. Mike Bergman et al.  USB Implementers Forum. May 27, 2001. Specification. URL: <a href="https://www.usb.org/document-library/device-class-definition-hid-111">https://www.usb.org/document-library/device-class-definition-hid-111</a>
+    </dd><dt id="bib-webidl">[WEBIDL]</dt><dd>
+      <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Edgar Chen; Timothy Gu.  WHATWG. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
+    </dd></dl>
+  </section><section id="informative-references"><div class="header-wrapper"><h3 id="b-2-informative-references"><bdi class="secno">B.2 </bdi>Informative references</h3><a class="self-link" href="#informative-references" aria-label="Permalink for Appendix B.2"></a></div>
+    
+    <dl class="bibliography"><dt id="bib-gamepad">[GAMEPAD]</dt><dd>
+      <a href="https://www.w3.org/TR/gamepad/"><cite>Gamepad</cite></a>. Steve Agoston; James Hollyer; Matthew Reynolds.  W3C. 11 February 2022. W3C Working Draft. URL: <a href="https://www.w3.org/TR/gamepad/">https://www.w3.org/TR/gamepad/</a>
+    </dd><dt id="bib-pointerevents">[pointerevents]</dt><dd>
+      <a href="https://www.w3.org/TR/pointerevents/"><cite>Pointer Events</cite></a>. Jacob Rossi; Matt Brubeck.  W3C. 4 April 2019. W3C Recommendation. URL: <a href="https://www.w3.org/TR/pointerevents/">https://www.w3.org/TR/pointerevents/</a>
+    </dd><dt id="bib-uievents">[uievents]</dt><dd>
+      <a href="https://www.w3.org/TR/uievents/"><cite>UI Events</cite></a>. Gary Kacmarcik; Travis Leithead.  W3C. 20 October 2021. W3C Working Draft. URL: <a href="https://www.w3.org/TR/uievents/">https://www.w3.org/TR/uievents/</a>
+    </dd><dt id="bib-usbif-hid-usage">[USBIF-HID-USAGE]</dt><dd>
+      <a href="https://www.usb.org/document-library/hid-usage-tables-122"><cite>HID Usage Tables for Universal Serial Bus (USB) version 1.22</cite></a>. David Abzarian et al.  USB Implementers Forum. April 6, 2021. Specification. URL: <a href="https://www.usb.org/document-library/hid-usage-tables-122">https://www.usb.org/document-library/hid-usage-tables-122</a>
+    </dd></dl>
   </section></section><p role="navigation" id="back-to-top">
     <a href="#title"><abbr title="Back to Top">↑</abbr></a>
   </p><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-navigator-hid" aria-label="Links in this document to definition: hid">
@@ -3087,7 +3172,9 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <p><b>Referenced in:</b></p>
       <ul>
     <li>
-    <a href="#ref-for-dom-navigator-hid-1" title="§ 4. Extensions to the Navigator interface">§ 4. Extensions to the Navigator interface</a> <a href="#ref-for-dom-navigator-hid-2" title="Reference 2">(2)</a> 
+    <a href="#ref-for-dom-navigator-hid-1" title="§ 4. Extensions to the Navigator interface">§ 4. Extensions to the Navigator interface</a> 
+  </li><li>
+    <a href="#ref-for-dom-navigator-hid-2" title="§ 4.1 hid attribute">§ 4.1 hid attribute</a> 
   </li><li>
     <a href="#ref-for-dom-navigator-hid-3" title="§ 5. HID interface">§ 5. HID interface</a> <a href="#ref-for-dom-navigator-hid-4" title="Reference 2">(2)</a> 
   </li><li>
@@ -3103,7 +3190,9 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <p><b>Referenced in:</b></p>
       <ul>
     <li>
-    <a href="#ref-for-dom-hid-1" title="§ 4. Extensions to the Navigator interface">§ 4. Extensions to the Navigator interface</a> <a href="#ref-for-dom-hid-2" title="Reference 2">(2)</a> 
+    <a href="#ref-for-dom-hid-1" title="§ 4. Extensions to the Navigator interface">§ 4. Extensions to the Navigator interface</a> 
+  </li><li>
+    <a href="#ref-for-dom-hid-2" title="§ 4.1 hid attribute">§ 4.1 hid attribute</a> 
   </li><li>
     <a href="#ref-for-dom-hid-3" title="§ 5. HID interface">§ 5. HID interface</a> 
   </li>
@@ -3611,16 +3700,16 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
   </li><li>
     <a href="#ref-for-dom-hid-requestdevice-5" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> <a href="#ref-for-dom-hid-requestdevice-6" title="Reference 2">(2)</a> 
   </li><li>
-    <a href="#ref-for-dom-hid-requestdevice-7" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> 
+    <a href="#ref-for-dom-hid-requestdevice-7" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hid-requestdevice-8" title="Reference 2">(2)</a> 
   </li><li>
-    <a href="#ref-for-dom-hid-requestdevice-8" title="§ 13. Usage Examples">§ 13. Usage Examples</a> 
+    <a href="#ref-for-dom-hid-requestdevice-9" title="§ 13. Usage Examples">§ 13. Usage Examples</a> 
   </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-hiddevicerequestoptions" aria-label="Links in this document to definition: HIDDeviceRequestOptions">
       <span class="caret"></span>
       <div>
         <a class="self-link" href="#dom-hiddevicerequestoptions" aria-label="Permalink for definition: HIDDeviceRequestOptions. Activate to close this dialog.">Permalink</a>
-        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-319047892">IDL</a>
+        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-2134743190">IDL</a>
       </div>
       <p><b>Referenced in:</b></p>
       <ul>
@@ -3634,7 +3723,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <span class="caret"></span>
       <div>
         <a class="self-link" href="#dom-hiddevicerequestoptions-filters" aria-label="Permalink for definition: filters. Activate to close this dialog.">Permalink</a>
-        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-319047892">IDL</a>
+        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-2134743190">IDL</a>
       </div>
       <p><b>Referenced in:</b></p>
       <ul>
@@ -3642,6 +3731,22 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
     <a href="#ref-for-dom-hiddevicerequestoptions-filters-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> <a href="#ref-for-dom-hiddevicerequestoptions-filters-2" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicerequestoptions-filters-3" title="Reference 3">(3)</a> 
   </li><li>
     <a href="#ref-for-dom-hiddevicerequestoptions-filters-4" title="§ 5.2.1 HIDDeviceRequestOptions dictionary">§ 5.2.1 HIDDeviceRequestOptions dictionary</a> 
+  </li>
+  </ul>
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-hiddevicerequestoptions-exclusionfilters" aria-label="Links in this document to definition: exclusionFilters">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dom-hiddevicerequestoptions-exclusionfilters" aria-label="Permalink for definition: exclusionFilters. Activate to close this dialog.">Permalink</a>
+        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-2134743190">IDL</a>
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+    <a href="#ref-for-dom-hiddevicerequestoptions-exclusionfilters-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> <a href="#ref-for-dom-hiddevicerequestoptions-exclusionfilters-2" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicerequestoptions-exclusionfilters-3" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicerequestoptions-exclusionfilters-4" title="Reference 4">(4)</a> 
+  </li><li>
+    <a href="#ref-for-dom-hiddevicerequestoptions-exclusionfilters-5" title="§ 5.2.1 HIDDeviceRequestOptions dictionary">§ 5.2.1 HIDDeviceRequestOptions dictionary</a> 
+  </li><li>
+    <a href="#ref-for-dom-hiddevicerequestoptions-exclusionfilters-6" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> 
   </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-hiddevicefilter" aria-label="Links in this document to definition: HIDDeviceFilter">
@@ -3653,9 +3758,9 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <p><b>Referenced in:</b></p>
       <ul>
     <li>
-    <a href="#ref-for-dom-hiddevicefilter-1" title="§ 5.2.1 HIDDeviceRequestOptions dictionary">§ 5.2.1 HIDDeviceRequestOptions dictionary</a> 
+    <a href="#ref-for-dom-hiddevicefilter-1" title="§ 5.2.1 HIDDeviceRequestOptions dictionary">§ 5.2.1 HIDDeviceRequestOptions dictionary</a> <a href="#ref-for-dom-hiddevicefilter-2" title="Reference 2">(2)</a> 
   </li><li>
-    <a href="#ref-for-dom-hiddevicefilter-2" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-3" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-4" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-5" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-6" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-7" title="Reference 6">(6)</a> <a href="#ref-for-dom-hiddevicefilter-8" title="Reference 7">(7)</a> <a href="#ref-for-dom-hiddevicefilter-9" title="Reference 8">(8)</a> 
+    <a href="#ref-for-dom-hiddevicefilter-3" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-4" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-5" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-6" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-7" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-8" title="Reference 6">(6)</a> <a href="#ref-for-dom-hiddevicefilter-9" title="Reference 7">(7)</a> <a href="#ref-for-dom-hiddevicefilter-10" title="Reference 8">(8)</a> <a href="#ref-for-dom-hiddevicefilter-11" title="Reference 9">(9)</a> 
   </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-hiddevicefilter-vendorid" aria-label="Links in this document to definition: vendorId">
@@ -3667,9 +3772,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <p><b>Referenced in:</b></p>
       <ul>
     <li>
-    <a href="#ref-for-dom-hiddevicefilter-vendorid-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> 
-  </li><li>
-    <a href="#ref-for-dom-hiddevicefilter-vendorid-2" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-3" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-4" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-5" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-6" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-7" title="Reference 6">(6)</a> 
+    <a href="#ref-for-dom-hiddevicefilter-vendorid-1" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-2" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-3" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-4" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-5" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-6" title="Reference 6">(6)</a> <a href="#ref-for-dom-hiddevicefilter-vendorid-7" title="Reference 7">(7)</a> 
   </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-hiddevicefilter-productid" aria-label="Links in this document to definition: productId">
@@ -3681,9 +3784,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <p><b>Referenced in:</b></p>
       <ul>
     <li>
-    <a href="#ref-for-dom-hiddevicefilter-productid-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> 
-  </li><li>
-    <a href="#ref-for-dom-hiddevicefilter-productid-2" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-productid-3" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-productid-4" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-productid-5" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-productid-6" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-productid-7" title="Reference 6">(6)</a> 
+    <a href="#ref-for-dom-hiddevicefilter-productid-1" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-productid-2" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-productid-3" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-productid-4" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-productid-5" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-productid-6" title="Reference 6">(6)</a> <a href="#ref-for-dom-hiddevicefilter-productid-7" title="Reference 7">(7)</a> 
   </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-hiddevicefilter-usagepage" aria-label="Links in this document to definition: usagePage">
@@ -3695,9 +3796,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <p><b>Referenced in:</b></p>
       <ul>
     <li>
-    <a href="#ref-for-dom-hiddevicefilter-usagepage-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> 
-  </li><li>
-    <a href="#ref-for-dom-hiddevicefilter-usagepage-2" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-3" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-4" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-5" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-6" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-7" title="Reference 6">(6)</a> 
+    <a href="#ref-for-dom-hiddevicefilter-usagepage-1" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-2" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-3" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-4" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-5" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-6" title="Reference 6">(6)</a> <a href="#ref-for-dom-hiddevicefilter-usagepage-7" title="Reference 7">(7)</a> 
   </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-hiddevicefilter-usage" aria-label="Links in this document to definition: usage">
@@ -3709,21 +3808,31 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <p><b>Referenced in:</b></p>
       <ul>
     <li>
-    <a href="#ref-for-dom-hiddevicefilter-usage-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> 
-  </li><li>
-    <a href="#ref-for-dom-hiddevicefilter-usage-2" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-usage-3" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-usage-4" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-usage-5" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-usage-6" title="Reference 5">(5)</a> 
+    <a href="#ref-for-dom-hiddevicefilter-usage-1" title="§ 5.2.2 HIDDeviceFilter dictionary">§ 5.2.2 HIDDeviceFilter dictionary</a> <a href="#ref-for-dom-hiddevicefilter-usage-2" title="Reference 2">(2)</a> <a href="#ref-for-dom-hiddevicefilter-usage-3" title="Reference 3">(3)</a> <a href="#ref-for-dom-hiddevicefilter-usage-4" title="Reference 4">(4)</a> <a href="#ref-for-dom-hiddevicefilter-usage-5" title="Reference 5">(5)</a> <a href="#ref-for-dom-hiddevicefilter-usage-6" title="Reference 6">(6)</a> 
   </li>
   </ul>
-    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-matches-any-filter" aria-label="Links in this document to definition: matches any filter">
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-a-valid-filter" aria-label="Links in this document to definition: a valid filter">
       <span class="caret"></span>
       <div>
-        <a class="self-link" href="#dfn-matches-any-filter" aria-label="Permalink for definition: matches any filter. Activate to close this dialog.">Permalink</a>
+        <a class="self-link" href="#dfn-a-valid-filter" aria-label="Permalink for definition: a valid filter. Activate to close this dialog.">Permalink</a>
          
       </div>
       <p><b>Referenced in:</b></p>
       <ul>
     <li>
-    <a href="#ref-for-dfn-matches-any-filter-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> 
+    <a href="#ref-for-dfn-a-valid-filter-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> <a href="#ref-for-dfn-a-valid-filter-2" title="Reference 2">(2)</a> 
+  </li>
+  </ul>
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-match-any-filter" aria-label="Links in this document to definition: matches any filter">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-match-any-filter" aria-label="Permalink for definition: matches any filter. Activate to close this dialog.">Permalink</a>
+         
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+    <a href="#ref-for-dfn-match-any-filter-1" title="§ 5.2 requestDevice() method">§ 5.2 requestDevice() method</a> <a href="#ref-for-dfn-match-any-filter-2" title="Reference 2">(2)</a> 
   </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-matches-the-device-ids" aria-label="Links in this document to definition: matches the device IDs">
