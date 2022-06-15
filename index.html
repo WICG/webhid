@@ -384,18 +384,17 @@
           parsing the [=report descriptor=].
         </p>
         <p>
-          The [=report descriptor=] format is described in
-          [[USBIF-HID-CLASS]] section 6.2.2. The algorithm below is intended
-          to implement the same parsing algorithm described in that section.
+          The [=report descriptor=] format is described in [[USBIF-HID-CLASS]]
+          section 6.2.2. The algorithm below is intended to implement the same
+          parsing algorithm described in that section.
         </p>
         <p>
-          The [=report descriptor=] contains three classes of items.
-          <dfn>Main items</dfn> are used to define and group data fields.
-          <dfn>Global items</dfn> and <dfn>Local items</dfn> describe the
-          data fields. [=Local items=] define characteristics that only apply
-          to the next [=Main item=], while [=Global items=] define
-          characteristics that affect all subsequently defined [=Main
-          items=].
+          The [=report descriptor=] contains three classes of items. <dfn>Main
+          items</dfn> are used to define and group data fields. <dfn>Global
+          items</dfn> and <dfn>Local items</dfn> describe the data fields.
+          [=Local items=] define characteristics that only apply to the next
+          [=Main item=], while [=Global items=] define characteristics that
+          affect all subsequently defined [=Main items=].
         </p>
         <p>
           Each item has a <dfn>item data field</dfn> containing 0, 1, 2, or 4
@@ -403,7 +402,7 @@
           that describes how many bytes are used to store the [=item data
           field=]. Each item also has a tag that identifies its type.
         </p>
-        </div>
+      </div>
       <ol>
         <li>Let |items| be the result of converting the [=report descriptor=]
         [=byte sequence=] into a [=list=] of [=Main items=], [=Global items=],
@@ -964,8 +963,8 @@
                 <ol>
                   <li>If the user has allowed the site to access |device| as
                   the result of a previous call to {{HID/requestDevice()}} and
-                  |device|.{{HIDDevice/[[state]]}} is not `"forgotten"`,
-                  then [=list/append=] |device| to |devices|.
+                  |device|.{{HIDDevice/[[state]]}} is not `"forgotten"`, then
+                  [=list/append=] |device| to |devices|.
                   </li>
                 </ol>
               </li>
@@ -1015,18 +1014,18 @@
           then run the following steps [=list/for each=]
           |filter:HIDDeviceFilter| of
           |options|["{{HIDDeviceRequestOptions/filters}}"]:
-          <ol>
-            <li>If |filter| is not [=a valid filter=], then [=reject=] |promise|
-            with a {{TypeError}} and return |promise|.
-            </li>
-          </ol>
+            <ol>
+              <li>If |filter| is not [=a valid filter=], then [=reject=]
+              |promise| with a {{TypeError}} and return |promise|.
+              </li>
+            </ol>
           </li>
           <li>If |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"] is
           present, then run the following steps:
             <ol>
-              <li>If |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"] is
-              empty, then [=reject=] |promise| with a {{TypeError}} and return
-              |promise|.
+              <li>If |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"]
+              is empty, then [=reject=] |promise| with a {{TypeError}} and
+              return |promise|.
               </li>
               <li>[=list/For each=] |exclusionFilter:HIDDeviceFilter| of
               |options|["{{HIDDeviceRequestOptions/exclusionFilters}}"]:
@@ -1161,12 +1160,12 @@
           </dl>
           <div class="note">
             <p>
-              Device filters are used to narrow the list of devices presented to
-              the user in the chooser dialog created by {{HID/requestDevice()}}.
-              When no filters are provided, all connected devices matching no
-              exclusion filters are included. When one or more filters are
-              provided, a device is included if any filter matches and no
-              exclusion filters matches.
+              Device filters are used to narrow the list of devices presented
+              to the user in the chooser dialog created by
+              {{HID/requestDevice()}}. When no filters are provided, all
+              connected devices matching no exclusion filters are included.
+              When one or more filters are provided, a device is included if
+              any filter matches and no exclusion filters matches.
             </p>
             <p>
               All {{HIDDeviceFilter}} members are optional. Each member
@@ -1206,10 +1205,10 @@
             </p>
             <p>
               The {{HIDDeviceRequestOptions/exclusionFilters}} option allows an
-              application to exclude some devices presented to the user from the
-              chooser dialog created by {{HID/requestDevice()}} that are known
-              to not work as expected, even though they implement a specific
-              device class for instance.
+              application to exclude some devices presented to the user from
+              the chooser dialog created by {{HID/requestDevice()}} that are
+              known to not work as expected, even though they implement a
+              specific device class for instance.
             </p>
           </div>
           <p>
@@ -1220,8 +1219,8 @@
             <li>If |filter| is empty, then return `false`.
             </li>
             <li>If |filter|["{{HIDDeviceFilter/productId}}"] is present and
-            |filter|["{{HIDDeviceFilter/vendorId}}"] is not present, then return
-            `false`.
+            |filter|["{{HIDDeviceFilter/vendorId}}"] is not present, then
+            return `false`.
             </li>
             <li>If |filter|["{{HIDDeviceFilter/usage}}"] is present and
             |filter|["{{HIDDeviceFilter/usagePage}}"] is not present, then
@@ -1231,8 +1230,8 @@
             </li>
           </ol>
           <p>
-            A {{HIDDevice}} |device:HIDDevice| <dfn data-lt="match any
-            filter">matches any filter</dfn> in a [=sequence=]
+            A {{HIDDevice}} |device:HIDDevice| <dfn data-lt=
+            "match any filter">matches any filter</dfn> in a [=sequence=]
             |filters:sequence&lt;HIDDeviceFilter&gt;| of {{HIDDeviceFilter}} if
             these steps return `true`:
           </p>
@@ -1719,47 +1718,46 @@
               <li>[=list/For each=] |device:HIDDevice| of
               [=this=].{{HID/[[devices]]}}:
                 <ol>
-                  <li>
-                    If |device| does not share device access permissions with
-                    the HIDDevice, then continue to the next device.
+                  <li>If |device| does not share device access permissions with
+                  the HIDDevice, then continue to the next device.
                   </li>
                   <li>Set |device|.{{HIDDevice/[[state]]}} to `"forgetting"`.
                   </li>
                   <li>[=list/For each=] |pendingPromise:Promise| of
-                    |device|.{{HIDDevice/[[pendingSendReportPromises]]}}:
-                      <ol>
-                        <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
-                        {{DOMException}}.
-                        </li>
-                      </ol>
-                    </li>
-                    <li>[=list/Empty=]
-                    |device|.{{HIDDevice/[[pendingSendReportPromises]]}}.
-                    </li>
-                    <li>[=list/For each=] |pendingPromise:Promise| of
-                      |device|.{{HIDDevice/[[pendingSendFeatureReportPromises]]}}:
-                      <ol>
-                        <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
-                        {{DOMException}}.
-                        </li>
-                      </ol>
-                    </li>
-                    <li>[=list/Empty=]
-                    |device|.{{HIDDevice/[[pendingSendFeatureReportPromises]]}}.
-                    </li>
-                    <li>[=list/For each=] |pendingPromise:Promise| of
-                    |device|.{{HIDDevice/[[pendingReceiveFeatureReportPromises]]}}:
-                      <ol>
-                        <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
-                        {{DOMException}}.
-                        </li>
-                      </ol>
-                    </li>
-                    <li>[=list/Empty=]
-                    |device|.{{HIDDevice/[[pendingReceiveFeatureReportPromises]]}}.
-                    </li>
-                  <li>Invoke the user agent to revoke access to all the [=HID interfaces=]
-                  exposed by |device|.
+                  |device|.{{HIDDevice/[[pendingSendReportPromises]]}}:
+                    <ol>
+                      <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
+                      {{DOMException}}.
+                      </li>
+                    </ol>
+                  </li>
+                  <li>[=list/Empty=]
+                  |device|.{{HIDDevice/[[pendingSendReportPromises]]}}.
+                  </li>
+                  <li>[=list/For each=] |pendingPromise:Promise| of
+                  |device|.{{HIDDevice/[[pendingSendFeatureReportPromises]]}}:
+                    <ol>
+                      <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
+                      {{DOMException}}.
+                      </li>
+                    </ol>
+                  </li>
+                  <li>[=list/Empty=]
+                  |device|.{{HIDDevice/[[pendingSendFeatureReportPromises]]}}.
+                  </li>
+                  <li>[=list/For each=] |pendingPromise:Promise| of
+                  |device|.{{HIDDevice/[[pendingReceiveFeatureReportPromises]]}}:
+                    <ol>
+                      <li>[=Reject=] |pendingPromise| with an "{{AbortError}}"
+                      {{DOMException}}.
+                      </li>
+                    </ol>
+                  </li>
+                  <li>[=list/Empty=]
+                  |device|.{{HIDDevice/[[pendingReceiveFeatureReportPromises]]}}.
+                  </li>
+                  <li>Invoke the user agent to revoke access to all the [=HID
+                  interfaces=] exposed by |device|.
                   </li>
                   <li>Set |device|.{{HIDDevice/[[state]]}} to `"forgotten"`.
                   </li>
