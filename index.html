@@ -17,7 +17,7 @@
         }],
         github: "WICG/webhid",
         group: "wicg",
-        xref: ["DOM", "HTML", "INFRA", "PERMISSIONS-POLICY", "POINTEREVENTS", "UIEVENTS", "GAMEPAD"],
+        xref: ["DOM", "HTML", "INFRA", "PERMISSIONS-POLICY", "POINTEREVENTS", "UIEVENTS", "GAMEPAD", "SERVICE-WORKERS"],
         localBiblio: {
           "USBIF-HID-CLASS": {
             "authors": [
@@ -267,7 +267,7 @@
         `HID` interface
       </h2>
       <pre class="idl">
-        [Exposed=Window, SecureContext]
+        [Exposed=(Window,ServiceWorker), SecureContext]
         interface HID : EventTarget {
             attribute EventHandler onconnect;
             attribute EventHandler ondisconnect;
@@ -276,6 +276,14 @@
                 HIDDeviceRequestOptions options);
         };
       </pre>
+      <div class="note">
+        <p>
+          The user agent's implement may choose to conditionally expose
+          {{hid}} attribute of the {{Navigator}} when the [=relevant global object=]
+          of the {{Navigator}} is {{ServiceWorkerGlobalScope}}. For example,
+          in the <b>Browser extension contexts</b> of [[browserext]].
+        </p>
+      </div>
       <p>
         Instances of {{HID}} are created with the internal slots described in
         the following table:
@@ -949,10 +957,20 @@
         <ol>
           <li>Let |promise:Promise| be [=a new promise=].
           </li>
-          <li>If [=this=]'s [=relevant global object=]'s [=associated
-          Document=] is not [=allowed to use=] the [=policy-controlled
-          feature=] named `"hid"`, [=reject=] |promise| with a
-          "{{SecurityError}}" {{DOMException}} and return |promise|.
+          <li>Let |document:Document| be null</li>
+          <li>If [=this=]'s [=relevant global object=] is {{Window/window}},
+          set |document| to [=this=]'s [=relevant global object=]'s
+          [=associated Document=].
+          </li>
+          <li>If [=this=]'s [=relevant global object=] is {{ServiceWorkerGlobalScope}}
+          and the associated [=service worker client=] is
+          [=service worker client/window client=],
+          set |document| to the [=associated Document=] of the associated
+          [=service worker client=]'s [=global object=].
+          </li>
+          <li>If |document| is null or |document| is not [=allowed to use=]
+          the [=policy-controlled feature=] named `"hid"`, [=reject=]
+          |promise| with a "{{SecurityError}}" {{DOMException}} and return |promise|.
           </li>
           <li>Run the following steps [=in parallel=]:
             <ol>
@@ -1007,10 +1025,14 @@
           feature=] named `"hid"`, [=reject=] |promise| with a
           "{{SecurityError}}" {{DOMException}} and return |promise|.
           </li>
-          <li>If the [=relevant global object=] of [=this=] does not have
-          [=transient activation=], [=reject=] |promise| with a
-          "{{SecurityError}}" {{DOMException}} and return |promise|.
+          <li>If the [=relevant global object=] of [=this=] is not {{Window/window}},
+          [=reject=] |promise| with a "{{NotSupportedError}}"
+          {{DOMException}} and return |promise|.
           </li>
+          <li>If the [=relevant global object=] of [=this=] does not have
+            [=transient activation=], [=reject=] |promise| with a
+            "{{SecurityError}}" {{DOMException}} and return |promise|.
+            </li>
           <li>If |options|["{{HIDDeviceRequestOptions/filters}}"] is present,
           then run the following steps [=list/for each=]
           |filter:HIDDeviceFilter| of
