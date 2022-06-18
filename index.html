@@ -262,6 +262,24 @@
         instance of the {{HID}} object.
       </p>
     </section>
+    <section data-dfn-for="WorkerNavigator">
+      <h2>
+        Extensions to the `WorkerNavigator` interface
+      </h2>
+      <pre class="idl">
+        [Exposed=ServiceWorker, SecureContext]
+        partial interface WorkerNavigator {
+            [SameObject] readonly attribute HID hid;
+        };
+      </pre>
+      <h3>
+        <dfn>hid</dfn> attribute
+      </h3>
+      <p>
+        When getting, the {{WorkerNavigator/hid}} attribute always returns the same
+        instance of the {{HID}} object.
+      </p>
+    </section>
     <section data-dfn-for="HID">
       <h2>
         `HID` interface
@@ -365,7 +383,10 @@
         [=parsing the Report descriptor=].
         </li>
         <li>Let |hid:HID| be the result of calling |device|'s [=relevant global
-        object=]'s {{Navigator}} object's {{Navigator/hid}} getter.
+        object=]'s {{Navigator}} object's {{Navigator/hid}} getter if |device|'s
+        [=relevant global object=] is a {{Window}} object, otherwise be the
+        result of calling |device|'s [=relevant global object=]'s {{WorkerNavigator}}
+        object's {{WorkerNavigator/hid}} getter.
         </li>
         <li>[=list/Append=] |device| to |hid|.{{HID/[[devices]]}}.
         </li>
@@ -935,7 +956,10 @@
         |hid|.{{HID/[[devices]]}} representing the interface.
         </li>
         <li>Let |hid:HID| be the result of calling |device|'s [=relevant global
-        object=]'s {{Navigator}} object's {{Navigator/hid}} getter.
+        object=]'s {{Navigator}} object's {{Navigator/hid}} getter if |device|'s
+        [=relevant global object=] is a {{Window}} object, otherwise be the
+        result of calling |device|'s [=relevant global object=]'s {{WorkerNavigator}}
+        object's {{WorkerNavigator/hid}} getter.
         </li>
         <li>[=list/Remove=] |device| from |hid|.{{HID/[[devices]]}}.
         </li>
@@ -957,18 +981,18 @@
         <ol>
           <li>Let |promise:Promise| be [=a new promise=].
           </li>
-          <li>Let |document:Document| be null</li>
-          <li>If [=this=]'s [=relevant global object=] is {{Window/window}},
+          <li>Let |document:Document| be `null`.</li>
+          <li>If [=this=]'s [=relevant global object=] is a {{Window/window}} object,
           set |document| to [=this=]'s [=relevant global object=]'s
           [=associated Document=].
           </li>
-          <li>If [=this=]'s [=relevant global object=] is {{ServiceWorkerGlobalScope}}
-          and the associated [=service worker client=] is
-          [=service worker client/window client=],
-          set |document| to the [=associated Document=] of the associated
-          [=service worker client=]'s [=global object=].
+          <li>If [=this=]'s [=relevant global object=] is a {{ServiceWorkerGlobalScope}}
+          object and the associated [=service worker client=] is
+          [=service worker client/window client=], set |document| to the
+          [=associated Document=] of the associated [=service worker client=]'s
+          [=global object=].
           </li>
-          <li>If |document| is null or |document| is not [=allowed to use=]
+          <li>If |document| is `null` or |document| is not [=allowed to use=]
           the [=policy-controlled feature=] named `"hid"`, [=reject=]
           |promise| with a "{{SecurityError}}" {{DOMException}} and return |promise|.
           </li>
