@@ -290,7 +290,7 @@
             attribute EventHandler onconnect;
             attribute EventHandler ondisconnect;
             Promise&lt;sequence&lt;HIDDevice&gt;&gt; getDevices();
-            Promise&lt;sequence&lt;HIDDevice&gt;&gt; requestDevice(
+            [Exposed=Window] Promise&lt;sequence&lt;HIDDevice&gt;&gt; requestDevice(
                 HIDDeviceRequestOptions options);
         };
       </pre>
