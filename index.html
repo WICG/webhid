@@ -584,12 +584,12 @@ partial interface <a data-idl="partial" data-link-type="interface" data-title="W
         <code>HID</code> interface
       </h2><a class="self-link" href="#hid-interface" aria-label="Permalink for Section 6."></a></div>
       
-      <pre class="idl def" id="webidl-330512177"><span class="idlHeader"><a class="self-link" href="#webidl-330512177">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hid" data-title="HID">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=(Window,ServiceWorker)</span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
+      <pre class="idl def" id="webidl-724087938"><span class="idlHeader"><a class="self-link" href="#webidl-724087938">WebIDL</a></span><code><span data-idl="" class="idlInterface" id="idl-def-hid" data-title="HID">[<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=(Window,ServiceWorker)</span>, <span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext">SecureContext</a></span>]
 interface <dfn data-export="" data-dfn-type="interface" id="dom-hid" data-idl="interface" data-title="HID" data-dfn-for="" class="idlID" tabindex="0" aria-haspopup="dialog"><code>HID</code></dfn> : <span class="idlSuperclass"><a data-link-type="idl" data-type="interface" href="https://dom.spec.whatwg.org/#eventtarget">EventTarget</a></span> {<span data-idl="" class="idlAttribute" id="idl-def-hid-onconnect" data-title="onconnect" data-dfn-for="HID">
     attribute<span class="idlType"> <a data-link-type="idl" data-type="typedef" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler">EventHandler</a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-hid-onconnect" id="ref-for-dom-hid-onconnect-1"><code>onconnect</code></a>;</span><span data-idl="" class="idlAttribute" id="idl-def-hid-ondisconnect" data-title="ondisconnect" data-dfn-for="HID">
     attribute<span class="idlType"> <a data-link-type="idl" data-type="typedef" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler">EventHandler</a></span> <a class="internalDFN idlName" data-link-type="attribute" href="#dom-hid-ondisconnect" id="ref-for-dom-hid-ondisconnect-1"><code>ondisconnect</code></a>;</span><span data-idl="" class="idlMethod" id="idl-def-hid-getdevices" data-title="getDevices" data-dfn-for="HID"><span class="idlType">
-    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-promise">Promise</a>&lt;<a data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>&lt;<a data-link-type="idl" href="#dom-hiddevice" class="internalDFN" id="ref-for-dom-hiddevice-1"><code>HIDDevice</code></a>&gt;&gt;</span> <a class="internalDFN idlName" data-link-type="method" href="#dom-hid-getdevices" id="ref-for-dom-hid-getdevices-1"><code>getDevices</code></a>();</span><span data-idl="" class="idlMethod" id="idl-def-hid-requestdevice-options" data-title="requestDevice" data-dfn-for="HID"><span class="idlType">
-    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-promise">Promise</a>&lt;<a data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>&lt;<a data-link-type="idl" href="#dom-hiddevice" class="internalDFN" id="ref-for-dom-hiddevice-2"><code>HIDDevice</code></a>&gt;&gt;</span> <a class="internalDFN idlName" data-link-type="method" href="#dom-hid-requestdevice" id="ref-for-dom-hid-requestdevice-1"><code>requestDevice</code></a>(<span class="idlType">
+    <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-promise">Promise</a>&lt;<a data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>&lt;<a data-link-type="idl" href="#dom-hiddevice" class="internalDFN" id="ref-for-dom-hiddevice-1"><code>HIDDevice</code></a>&gt;&gt;</span> <a class="internalDFN idlName" data-link-type="method" href="#dom-hid-getdevices" id="ref-for-dom-hid-getdevices-1"><code>getDevices</code></a>();</span><span data-idl="" class="idlMethod" id="idl-def-hid-requestdevice-options" data-title="requestDevice" data-dfn-for="HID">
+    [<span class="extAttr"><a data-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed">Exposed</a>=Window</span>]<span class="idlType"> <a data-type="interface" href="https://webidl.spec.whatwg.org/#idl-promise">Promise</a>&lt;<a data-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence">sequence</a>&lt;<a data-link-type="idl" href="#dom-hiddevice" class="internalDFN" id="ref-for-dom-hiddevice-2"><code>HIDDevice</code></a>&gt;&gt;</span> <a class="internalDFN idlName" data-link-type="method" href="#dom-hid-requestdevice" id="ref-for-dom-hid-requestdevice-1"><code>requestDevice</code></a>(<span class="idlType">
         <a data-link-type="idl" href="#dom-hiddevicerequestoptions" class="internalDFN" id="ref-for-dom-hiddevicerequestoptions-1"><code>HIDDeviceRequestOptions</code></a></span> <span class="idlParamName">options</span>);</span>
 };</span></code></pre>
       <div class="note" role="note" id="issue-container-generatedID"><div role="heading" class="note-title marker" id="h-note" aria-level="3"><span>Note</span></div><div class="">
@@ -3293,7 +3293,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <span class="caret"></span>
       <div>
         <a class="self-link" href="#dom-hid-onconnect" aria-label="Permalink for definition: onconnect. Activate to close this dialog.">Permalink</a>
-        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-330512177">IDL</a>
+        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-724087938">IDL</a>
       </div>
       <p><b>Referenced in:</b></p>
       <ul>
@@ -3317,7 +3317,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <span class="caret"></span>
       <div>
         <a class="self-link" href="#dom-hid-ondisconnect" aria-label="Permalink for definition: ondisconnect. Activate to close this dialog.">Permalink</a>
-        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-330512177">IDL</a>
+        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-724087938">IDL</a>
       </div>
       <p><b>Referenced in:</b></p>
       <ul>
@@ -3747,7 +3747,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <span class="caret"></span>
       <div>
         <a class="self-link" href="#dom-hid-getdevices" aria-label="Permalink for definition: getDevices(). Activate to close this dialog.">Permalink</a>
-        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-330512177">IDL</a>
+        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-724087938">IDL</a>
       </div>
       <p><b>Referenced in:</b></p>
       <ul>
@@ -3763,7 +3763,7 @@ requestButton.addEventListener(<span class="hljs-string">"click"</span>, <span c
       <span class="caret"></span>
       <div>
         <a class="self-link" href="#dom-hid-requestdevice" aria-label="Permalink for definition: requestDevice(). Activate to close this dialog.">Permalink</a>
-        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-330512177">IDL</a>
+        <span class="marker dfn-exported" title="Definition can be referenced by other specifications">exported</span> <a class="marker idl-block" title="Jump to IDL declaration" href="#webidl-724087938">IDL</a>
       </div>
       <p><b>Referenced in:</b></p>
       <ul>
