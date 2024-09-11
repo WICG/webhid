@@ -267,7 +267,7 @@
         Extensions to the `WorkerNavigator` interface
       </h2>
       <pre class="idl">
-        [Exposed=ServiceWorker, SecureContext]
+        [Exposed=(DedicatedWorker,ServiceWorker), SecureContext]
         partial interface WorkerNavigator {
             [SameObject] readonly attribute HID hid;
         };
@@ -285,7 +285,7 @@
         `HID` interface
       </h2>
       <pre class="idl">
-        [Exposed=(Window,ServiceWorker), SecureContext]
+        [Exposed=(DedicatedWorker,ServiceWorker,Window), SecureContext]
         interface HID : EventTarget {
             attribute EventHandler onconnect;
             attribute EventHandler ondisconnect;
@@ -981,9 +981,9 @@
           <li>Let |promise:Promise| be [=a new promise=].
           </li>
           <li>Let |document:Document| be `null`.</li>
-          <li>If [=this=]'s [=relevant global object=] is a {{Window/window}} object,
-          set |document| to [=this=]'s [=relevant global object=]'s
-          [=associated Document=].
+          <li>If [=this=]'s [=relevant global object=] is a {{DedicatedWorkerGlobalScope}}
+          or {{Window/window}} object, set |document| to [=this=]'s
+          [=relevant global object=]'s [=associated Document=].
           </li>
           <li>If [=this=]'s [=relevant global object=] is a {{ServiceWorkerGlobalScope}}
           object and the associated [=service worker client=] is
@@ -1361,7 +1361,7 @@
         `HIDDevice` interface
       </h2>
       <pre class="idl">
-        [Exposed=Window, SecureContext]
+        [Exposed=(DedicatedWorker,ServiceWorker,Window), SecureContext]
         interface HIDDevice : EventTarget {
             attribute EventHandler oninputreport;
             readonly attribute boolean opened;
@@ -2011,7 +2011,7 @@
         `HIDConnectionEvent` interface
       </h2>
       <pre class="idl">
-        [Exposed=Window, SecureContext]
+        [Exposed=(DedicatedWorker,ServiceWorker,Window), SecureContext]
         interface HIDConnectionEvent : Event {
             constructor(DOMString type, HIDConnectionEventInit eventInitDict);
             [SameObject] readonly attribute HIDDevice device;
@@ -2050,7 +2050,7 @@
         `HIDInputReportEvent` interface
       </h2>
       <pre class="idl">
-        [Exposed=Window, SecureContext]
+        [Exposed=(DedicatedWorker,ServiceWorker,Window), SecureContext]
         interface HIDInputReportEvent : Event {
             constructor(DOMString type, HIDInputReportEventInit eventInitDict);
             [SameObject] readonly attribute HIDDevice device;
